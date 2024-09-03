@@ -1,0 +1,72 @@
+[gd_scene load_steps=13 format=3 uid="uid://c8em3mfj7brbs"]
+
+[ext_resource type="Script" path="res://scenes/game/game2.gd" id="1_0wnmb"]
+[ext_resource type="PackedScene" uid="uid://rlxk0bwfcbah" path="res://scenes/user_interface/user_interface.tscn" id="2_jorqx"]
+[ext_resource type="Script" path="res://scripts/handlers/handler_stardust.gd" id="3_d2nmy"]
+[ext_resource type="PackedScene" uid="uid://baoismtnct0jr" path="res://sidescroller/parallax_background.tscn" id="4_5ef6c"]
+[ext_resource type="Texture2D" uid="uid://du2mtbtrirblk" path="res://sidescroller/images/PNG.png" id="5_7epjt"]
+[ext_resource type="PackedScene" uid="uid://bd6tt00dab3nt" path="res://sidescroller/ground.tscn" id="6_dxayu"]
+[ext_resource type="Script" path="res://sidescroller/SideScroller.gd" id="7_x5bj4"]
+[ext_resource type="Texture2D" uid="uid://dr3l2c25rnx5n" path="res://sidescroller/images/da0mibd-cb2a7df3-d6e3-4408-bea2-8d50353bdf5d.png" id="8_baw0j"]
+[ext_resource type="Texture2D" uid="uid://cid2im80v1f0e" path="res://sidescroller/images/tumblr_pirllhdn0L1xel9slo1_1280.png" id="9_lw67o"]
+[ext_resource type="Texture2D" uid="uid://ch5oht2qe0113" path="res://sidescroller/images/tumblr_7f303e6a4d5b06459d799ed8633b8cdc_3b344556_1280.jpg" id="10_23l7c"]
+[ext_resource type="Texture2D" uid="uid://1ilbg0lnhvmg" path="res://sidescroller/images/l273c1ry3qna1.webp" id="11_d8bn6"]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_fg303"]
+
+[node name="Game" type="Node"]
+script = ExtResource("1_0wnmb")
+
+[node name="UserInterface" parent="." instance=ExtResource("2_jorqx")]
+
+[node name="Handlers" type="Node" parent="."]
+
+[node name="Stardust" type="Node" parent="Handlers"]
+script = ExtResource("3_d2nmy")
+
+[node name="ParallaxBackground" parent="." instance=ExtResource("4_5ef6c")]
+
+[node name="Character" type="CharacterBody2D" parent="."]
+position = Vector2(640, 173)
+
+[node name="Sprite2D" type="Sprite2D" parent="Character"]
+scale = Vector2(0.05, 0.05)
+texture = ExtResource("5_7epjt")
+flip_h = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Character"]
+position = Vector2(0, 13)
+rotation = 1.5708
+scale = Vector2(2.56, 4.55)
+shape = SubResource("CapsuleShape2D_fg303")
+
+[node name="Ground" parent="." instance=ExtResource("6_dxayu")]
+
+[node name="Camera2D" type="Camera2D" parent="."]
+position = Vector2(640, 360)
+
+[node name="SideScroller" type="Node2D" parent="."]
+script = ExtResource("7_x5bj4")
+camera_path = NodePath("../Camera2D")
+
+[node name="Sprite2D" type="Sprite2D" parent="SideScroller"]
+position = Vector2(-999, 19)
+texture = ExtResource("8_baw0j")
+centered = false
+flip_h = true
+
+[node name="Sprite2D2" type="Sprite2D" parent="SideScroller"]
+position = Vector2(-983, 19)
+texture = ExtResource("9_lw67o")
+centered = false
+
+[node name="Sprite2D3" type="Sprite2D" parent="SideScroller"]
+position = Vector2(-999, 19)
+texture = ExtResource("10_23l7c")
+centered = false
+flip_h = true
+
+[node name="Sprite2D4" type="Sprite2D" parent="SideScroller"]
+position = Vector2(-999, 19)
+texture = ExtResource("11_d8bn6")
+centered = false

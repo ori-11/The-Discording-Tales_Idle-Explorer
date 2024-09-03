@@ -1,0 +1,11 @@
+[gd_scene load_steps=2 format=3 uid="uid://dernygw2syatq"]
+
+[ext_resource type="Texture2D" uid="uid://ueu8y827e8rw" path="res://sidescroller/images/free-swamp-game-tileset-pixel-art/3 Objects/Grass/1.png" id="1_h0rhg"]
+
+[node name="Grass" type="Area2D"]
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("1_h0rhg")
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="."]
+polygon = PackedVector2Array(-1.6, -8.1, -1.6, -3.1, -2.6, -3.1, -2.6, -2.1, -3.4, -2.1, -3.4, -3.1, -4.4, -3.1, -4.4, -5.1, -5.6, -5.1, -5.6, -1.9, -4.6, -1.9, -4.6, 0.1, -3.6, 0.1, -3.6, 2.9, -4.6, 2.9, -4.6, 4.9, -5.6, 4.9, -5.6, 5.9, -6.4, 5.9, -6.4, 4.9, -7.6, 4.9, -7.6, 8.1, 7.6, 8.1, 7.6, 5.9, 6.6, 5.9, 6.6, 4.9, 5.6, 4.9, 5.6, -1.1, 4.4, -1.1, 4.4, 0.9, 3.4, 0.9, 3.4, 4.9, 2.4, 4.9, 2.4, 5.9, 1.6, 5.9, 1.6, 4.9, 0.6, 4.9, 0.6, 1.1, 1.6, 1.1, 1.6, -6.1, 0.6, -6.1, 0.6, -7.1, -0.4, -7.1, -0.4, -8.1)

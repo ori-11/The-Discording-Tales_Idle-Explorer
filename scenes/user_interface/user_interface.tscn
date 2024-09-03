@@ -1,0 +1,204 @@
+[gd_scene load_steps=5 format=3 uid="uid://rlxk0bwfcbah"]
+
+[ext_resource type="Script" path="res://scenes/user_interface/user_interface.gd" id="1_knqjo"]
+[ext_resource type="PackedScene" uid="uid://2fr0vrmbi3lr" path="res://scenes/prototypes/generator/prototype_generator.tscn" id="1_xd3pb"]
+[ext_resource type="Script" path="res://scenes/user_interface/stardust_label.gd" id="2_vjwei"]
+[ext_resource type="PackedScene" uid="uid://dk2jy2rq3vntt" path="res://scenes/prototypes/clicker/prototype_clicker.tscn" id="3_byq0d"]
+
+[node name="UserInterface" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_knqjo")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+layout_mode = 2
+offset_right = 1150.0
+offset_bottom = 650.0
+size_flags_horizontal = 3
+
+[node name="Top" type="Control" parent="VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+size_flags_stretch_ratio = 1.2
+
+[node name="Bottom" type="HBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="LeftPanel" type="Control" parent="VBoxContainer/Bottom"]
+custom_minimum_size = Vector2(240, 0)
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/Bottom/LeftPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Navigator" type="Control" parent="VBoxContainer/Bottom/LeftPanel/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="MarginContainer" type="MarginContainer" parent="VBoxContainer/Bottom/LeftPanel/VBoxContainer/Navigator"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 16
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 16
+
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/Bottom/LeftPanel/VBoxContainer/Navigator/MarginContainer"]
+layout_mode = 2
+
+[node name="PrototypeGeneratorLink" type="LinkButton" parent="VBoxContainer/Bottom/LeftPanel/VBoxContainer/Navigator/MarginContainer/VBoxContainer"]
+layout_mode = 2
+text = "Prototype Generator"
+
+[node name="PrototypeClickerLink" type="LinkButton" parent="VBoxContainer/Bottom/LeftPanel/VBoxContainer/Navigator/MarginContainer/VBoxContainer"]
+layout_mode = 2
+text = "Prototype Clicker"
+
+[node name="MarginContainer" type="MarginContainer" parent="VBoxContainer/Bottom/LeftPanel/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_right = 16
+
+[node name="HSeparator" type="HSeparator" parent="VBoxContainer/Bottom/LeftPanel/VBoxContainer/MarginContainer"]
+layout_mode = 2
+
+[node name="Resources" type="Control" parent="VBoxContainer/Bottom/LeftPanel/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="MarginContainer" type="MarginContainer" parent="VBoxContainer/Bottom/LeftPanel/VBoxContainer/Resources"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 16
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 16
+
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/Bottom/LeftPanel/VBoxContainer/Resources/MarginContainer"]
+layout_mode = 2
+
+[node name="StardustLabel" type="Label" parent="VBoxContainer/Bottom/LeftPanel/VBoxContainer/Resources/MarginContainer/VBoxContainer"]
+layout_mode = 2
+text = "Stardust : 15"
+script = ExtResource("2_vjwei")
+
+[node name="Margin" type="MarginContainer" parent="VBoxContainer/Bottom"]
+layout_mode = 2
+theme_override_constants/margin_top = 16
+theme_override_constants/margin_bottom = 16
+
+[node name="VSeparator" type="VSeparator" parent="VBoxContainer/Bottom/Margin"]
+layout_mode = 2
+
+[node name="RightPanel" type="VBoxContainer" parent="VBoxContainer/Bottom"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Actions" type="VBoxContainer" parent="VBoxContainer/Bottom/RightPanel"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+size_flags_stretch_ratio = 0.25
+
+[node name="Forward" type="HBoxContainer" parent="VBoxContainer/Bottom/RightPanel/Actions"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="Rest" type="Control" parent="VBoxContainer/Bottom/RightPanel/Actions/Forward"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="Button" type="Button" parent="VBoxContainer/Bottom/RightPanel/Actions/Forward/Rest"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "REST"
+
+[node name="Graze" type="Control" parent="VBoxContainer/Bottom/RightPanel/Actions/Forward"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="Button" type="Button" parent="VBoxContainer/Bottom/RightPanel/Actions/Forward/Graze"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "GRAZE"
+
+[node name="Haste" type="Control" parent="VBoxContainer/Bottom/RightPanel/Actions/Forward"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Button" type="Button" parent="VBoxContainer/Bottom/RightPanel/Actions/Forward/Haste"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "HASTE"
+
+[node name="Return" type="Control" parent="VBoxContainer/Bottom/RightPanel/Actions"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Button" type="Button" parent="VBoxContainer/Bottom/RightPanel/Actions/Return"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "RETURN"
+
+[node name="MainView" type="Control" parent="VBoxContainer/Bottom/RightPanel"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="PrototypeGenerator" parent="VBoxContainer/Bottom/RightPanel/MainView" node_paths=PackedStringArray("user_interface") instance=ExtResource("1_xd3pb")]
+layout_mode = 1
+user_interface = NodePath("../../../../..")
+
+[node name="PrototypeClicker" parent="VBoxContainer/Bottom/RightPanel/MainView" node_paths=PackedStringArray("user_interface") instance=ExtResource("3_byq0d")]
+visible = false
+layout_mode = 1
+view = 1
+user_interface = NodePath("../../../../..")
+
+[node name="Margin2" type="MarginContainer" parent="VBoxContainer/Bottom"]
+layout_mode = 2
+theme_override_constants/margin_top = 16
+theme_override_constants/margin_bottom = 16
+
+[node name="VSeparator" type="VSeparator" parent="VBoxContainer/Bottom/Margin2"]
+layout_mode = 2
+
+[connection signal="pressed" from="VBoxContainer/Bottom/LeftPanel/VBoxContainer/Navigator/MarginContainer/VBoxContainer/PrototypeGeneratorLink" to="." method="_on_prototype_generator_link_pressed"]
+[connection signal="pressed" from="VBoxContainer/Bottom/LeftPanel/VBoxContainer/Navigator/MarginContainer/VBoxContainer/PrototypeClickerLink" to="." method="_on_prototype_clicker_link_pressed"]

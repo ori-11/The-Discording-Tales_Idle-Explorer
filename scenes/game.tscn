@@ -1,0 +1,43 @@
+[gd_scene load_steps=10 format=3 uid="uid://bju4jxwr7a0pg"]
+
+[ext_resource type="Script" path="res://scenes/game.gd" id="1_iwj3v"]
+[ext_resource type="Script" path="res://scripts/handlers/handler_stardust.gd" id="3_uuwla"]
+[ext_resource type="PackedScene" uid="uid://duq6md8kiakk4" path="res://scenes/bg2.tscn" id="9_8658u"]
+[ext_resource type="PackedScene" uid="uid://dnvqc0nbfjk0b" path="res://scenes/groundsegment.tscn" id="9_re738"]
+[ext_resource type="PackedScene" uid="uid://bpkphu8qj137m" path="res://scenes/bg.tscn" id="10_nrarm"]
+[ext_resource type="PackedScene" uid="uid://b5pwnh1tmyrnl" path="res://scenes/ground.tscn" id="11_2juen"]
+[ext_resource type="PackedScene" uid="uid://bhtein0chknfn" path="res://scenes/dino.tscn" id="12_1dh7a"]
+[ext_resource type="PackedScene" uid="uid://lyf4a3sklk1o" path="res://scenes/hud.tscn" id="13_qmaoo"]
+[ext_resource type="PackedScene" uid="uid://lotwuige1aee" path="res://scenes/game_over.tscn" id="14_ojg3r"]
+
+[node name="Game" type="Node"]
+script = ExtResource("1_iwj3v")
+
+[node name="Handlers" type="Node" parent="."]
+
+[node name="Stardust" type="Node" parent="Handlers"]
+script = ExtResource("3_uuwla")
+
+[node name="Bg" parent="." instance=ExtResource("10_nrarm")]
+
+[node name="Bg2" parent="." instance=ExtResource("9_8658u")]
+layer = 0
+
+[node name="Ground" parent="." instance=ExtResource("11_2juen")]
+visible = false
+collision_layer = 0
+collision_mask = 0
+
+[node name="Dino" parent="." instance=ExtResource("12_1dh7a")]
+position = Vector2(550, 190)
+scale = Vector2(4, 4)
+
+[node name="Camera2D" type="Camera2D" parent="."]
+position = Vector2(576, 324)
+
+[node name="HUD" parent="." instance=ExtResource("13_qmaoo")]
+
+[node name="GameOver" parent="." instance=ExtResource("14_ojg3r")]
+process_mode = 2
+
+[node name="GroundSegment" parent="." instance=ExtResource("9_re738")]
