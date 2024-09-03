@@ -165,18 +165,18 @@ grow_horizontal = 2
 grow_vertical = 2
 text = "HASTE"
 
-[node name="Return" type="Control" parent="VBoxContainer/Bottom/RightPanel/Actions"]
+[node name="LookBack" type="Control" parent="VBoxContainer/Bottom/RightPanel/Actions"]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="Button" type="Button" parent="VBoxContainer/Bottom/RightPanel/Actions/Return"]
+[node name="Button" type="Button" parent="VBoxContainer/Bottom/RightPanel/Actions/LookBack"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-text = "RETURN"
+text = "LOOK BACK"
 
 [node name="MainView" type="Control" parent="VBoxContainer/Bottom/RightPanel"]
 layout_mode = 2

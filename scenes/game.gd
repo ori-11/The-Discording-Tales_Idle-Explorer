@@ -62,7 +62,7 @@ func _ready():
 	user_interface.get_node("VBoxContainer/Bottom/RightPanel/Actions/Forward/Rest/Button").connect("pressed", Callable(self, "_on_rest_button_pressed"))
 	user_interface.get_node("VBoxContainer/Bottom/RightPanel/Actions/Forward/Graze/Button").connect("pressed", Callable(self, "_on_graze_button_pressed"))
 	user_interface.get_node("VBoxContainer/Bottom/RightPanel/Actions/Forward/Haste/Button").connect("pressed", Callable(self, "_on_haste_button_pressed"))
-	user_interface.get_node("VBoxContainer/Bottom/RightPanel/Actions/Return/Button").connect("pressed", Callable(self, "_on_return_button_pressed"))
+	user_interface.get_node("VBoxContainer/Bottom/RightPanel/Actions/LookBack/Button").connect("pressed", Callable(self, "_on_lookback_button_pressed"))
 	new_game()
 
 func new_game():
@@ -144,7 +144,7 @@ func _on_graze_button_pressed():
 func _on_haste_button_pressed():
 	target_scroll_speed = 300
 	
-func _on_return_button_pressed():
+func _on_lookback_button_pressed():
 	target_scroll_speed = -100
 
 func generate_obs():
