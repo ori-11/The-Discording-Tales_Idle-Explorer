@@ -74,9 +74,13 @@ func new_game():
 	$Camera2D.position = CAM_START_POS
 	$Ground.position = Vector2i(0, 0)
 
+	# reset ground generation
+	$GroundSegment.reset_ground()
+
 	# reset hud and game over screen
 	$HUD.get_node("StartLabel").show()
 	$GameOver.hide()
+
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
