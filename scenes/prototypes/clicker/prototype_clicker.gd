@@ -9,9 +9,8 @@ extends Control
 @export var progress_bar: ProgressBar  # Reference to the ProgressBar
 @export var tooltip: LineEdit  # Reference to the LineEdit node for the tooltip
 
-var button_disabled_time = 1.0  # Time in seconds for the button cooldown
 var elapsed_time = 0.0  # To track the time progression
-var tooltip_description = "This button creates stardust and has a 1s cooldown."  # Tooltip text
+var tooltip_description = "This button creates stardust and has a cooldown."  # Tooltip text
 
 ## Initialize the label at launch
 func _ready() -> void:
@@ -28,7 +27,6 @@ func _ready() -> void:
 		tooltip.editable = false  # Disable editing for the tooltip
 		tooltip.visible = false  # Start hidden
 
-	timer.wait_time = button_disabled_time
 	timer.connect("timeout", Callable(self, "_on_timer_timeout"))
 	
 	progress_bar.min_value = 0  # Set the progress bar minimum value
@@ -61,8 +59,8 @@ func _on_button_pressed() -> void:
 	elapsed_time = 0.0  # Reset the elapsed time
 	progress_bar.value = 0  # Reset the progress bar value to 0
 	
-	# Hide tooltip when clicked, but only if the button has a cooldown
-	if button_disabled_time > 0:
+	# Hide tooltip when clicked, but only if the timer has a cooldown
+	if timer.wait_time > 0:
 		tooltip.visible = false
 	
 	timer.start()  # Start the timer
@@ -92,7 +90,7 @@ func _on_button_mouse_exited() -> void:
 func _process(delta: float) -> void:
 	if button.disabled:
 		elapsed_time += delta
-		var progress = int((elapsed_time / button_disabled_time) * 100)  # Calculate progress in percentage
+		var progress = int((elapsed_time / timer.wait_time) * 100)  # Calculate progress in percentage based on timer's wait_time
 		progress_bar.value = progress  # Update the progress bar value
-		if elapsed_time >= button_disabled_time:  # If the time is complete
+		if elapsed_time >= timer.wait_time:  # If the time is complete
 			progress_bar.value = 100  # Ensure the bar is fully filled when the time is complete
