@@ -1,23 +1,30 @@
-[gd_scene load_steps=3 format=3 uid="uid://dk2jy2rq3vntt"]
+[gd_scene load_steps=4 format=3 uid="uid://dk2jy2rq3vntt"]
 
 [ext_resource type="Script" path="res://scenes/prototypes/clicker/prototype_clicker.gd" id="1_8ucsi"]
 [ext_resource type="Script" path="res://scenes/user_interface/stardust_label.gd" id="2_uuqui"]
+[ext_resource type="Theme" uid="uid://cbbxnokt3koh5" path="res://theme.tres" id="3_t1wmj"]
 
-[node name="PrototypeClicker" type="Control"]
+[node name="PrototypeClicker" type="Control" node_paths=PackedStringArray("button", "timer", "progress_bar", "tooltip")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
 script = ExtResource("1_8ucsi")
+button = NodePath("Button")
+timer = NodePath("Timer")
+progress_bar = NodePath("Button/ProgressBar")
+tooltip = NodePath("Tooltip")
 
 [node name="Label" type="Label" parent="."]
-custom_minimum_size = Vector2(0, 80)
+visible = false
 layout_mode = 1
 anchors_preset = 10
 anchor_right = 1.0
-offset_bottom = 23.0
+offset_bottom = 39.0
 grow_horizontal = 2
 theme_type_variation = &"HeaderLarge"
 text = "Stardust : <value>"
@@ -25,20 +32,51 @@ horizontal_alignment = 1
 vertical_alignment = 1
 script = ExtResource("2_uuqui")
 
-[node name="Button" type="Button" parent="."]
-custom_minimum_size = Vector2(320, 80)
+[node name="Tooltip" type="LineEdit" parent="."]
 layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -160.0
-offset_top = -40.0
-offset_right = 160.0
-offset_bottom = 40.0
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -31.0
+grow_horizontal = 2
+grow_vertical = 0
+text = "Description of the action, +1 X"
+alignment = 1
+editable = false
+context_menu_enabled = false
+virtual_keyboard_enabled = false
+shortcut_keys_enabled = false
+middle_mouse_paste_enabled = false
+selecting_enabled = false
+deselect_on_focus_loss_enabled = false
+drag_and_drop_selection_enabled = false
+
+[node name="Button" type="Button" parent="."]
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_bottom = 31.0
+grow_horizontal = 2
+theme = ExtResource("3_t1wmj")
+text = "Create Stardust"
+
+[node name="ProgressBar" type="ProgressBar" parent="Button"]
+show_behind_parent = true
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-text = "Create Stardust"
+mouse_filter = 2
+theme = ExtResource("3_t1wmj")
+fill_mode = 3
+show_percentage = false
+
+[node name="Timer" type="Timer" parent="."]
+one_shot = true
 
 [connection signal="pressed" from="Button" to="." method="_on_button_pressed"]

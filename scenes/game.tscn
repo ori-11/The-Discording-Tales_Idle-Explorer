@@ -19,9 +19,11 @@ script = ExtResource("1_iwj3v")
 script = ExtResource("3_uuwla")
 
 [node name="Bg" parent="." instance=ExtResource("10_nrarm")]
+visible = false
 
 [node name="Bg2" parent="." instance=ExtResource("9_8658u")]
 layer = 0
+visible = false
 
 [node name="Ground" parent="." instance=ExtResource("11_2juen")]
 visible = false
@@ -29,6 +31,7 @@ collision_layer = 0
 collision_mask = 0
 
 [node name="Dino" parent="." instance=ExtResource("12_1dh7a")]
+visible = false
 position = Vector2(550, 190)
 scale = Vector2(4, 4)
 
@@ -41,3 +44,4 @@ position = Vector2(576, 324)
 process_mode = 2
 
 [node name="GroundSegment" parent="." instance=ExtResource("9_re738")]
+visible = false
