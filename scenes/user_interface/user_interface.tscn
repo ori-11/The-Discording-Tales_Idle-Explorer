@@ -1,6 +1,7 @@
-[gd_scene load_steps=6 format=3 uid="uid://rlxk0bwfcbah"]
+[gd_scene load_steps=7 format=3 uid="uid://rlxk0bwfcbah"]
 
 [ext_resource type="Script" path="res://scenes/user_interface/user_interface.gd" id="1_knqjo"]
+[ext_resource type="Script" path="res://scenes/user_interface/debugger.gd" id="2_hnqqk"]
 [ext_resource type="Script" path="res://scenes/user_interface/stardust_label.gd" id="2_vjwei"]
 [ext_resource type="PackedScene" uid="uid://dk2jy2rq3vntt" path="res://scenes/prototypes/clicker/prototype_clicker.tscn" id="3_byq0d"]
 [ext_resource type="Script" path="res://scenes/user_interface/map.gd" id="5_r5lb0"]
@@ -84,6 +85,17 @@ layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 autowrap_mode = 1
+
+[node name="Debugger" type="VBoxContainer" parent="VBoxContainer/Bottom/LeftPanel"]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+script = ExtResource("2_hnqqk")
+
+[node name="ButtonStardust" type="Button" parent="VBoxContainer/Bottom/LeftPanel/Debugger"]
+custom_minimum_size = Vector2(200, 40)
+layout_mode = 2
+text = "Create Stardust"
 
 [node name="Margin" type="MarginContainer" parent="VBoxContainer/Bottom"]
 layout_mode = 2

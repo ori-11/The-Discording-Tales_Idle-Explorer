@@ -33,36 +33,44 @@ var max_position : float = 0.0  # Track the maximum forward position reached
 
 const SPEED_MODIFIER : int = 5000  # Adjust this value as needed
 
-
-##All instances of statics will share the same variable - "Singleton reference".
+## Singleton reference
 static var ref : Game
 
-## Assigns itself if there is no ref, and otherwise, destroy it. "Singleton check".
+## Contains the data to save and load
+var data : Data
+
+# Debugger node reference
+var debugger_node
+
+## Singleton check & Data initialization
+func _enter_tree() -> void:
+	_singleton_check()
+	data = Data.new()
+
+## Singleton check
 func _singleton_check() -> void:
 	if not ref:
 		ref = self
 		return
 	queue_free()
 
-## Contains the data to save and load.
-var data : Data
-
-## Singleton check & Data initialization.
-func _enter_tree() -> void:
-	_singleton_check()
-	data = Data.new()
-
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	screen_size = get_window().size
 	ground_height = $Ground.get_node("Sprite2D").texture.get_height()
 	$GameOver.get_node("Button").pressed.connect(new_game)
+	
 	# Get the buttons from the UserInterface node
 	var user_interface = get_node("/root/Game/HUD/UserInterface")
 	user_interface.get_node("VBoxContainer/Bottom/RightPanel/Actions/Forward/Rest/Button").connect("pressed", Callable(self, "_on_rest_button_pressed"))
 	user_interface.get_node("VBoxContainer/Bottom/RightPanel/Actions/Forward/Graze/Button").connect("pressed", Callable(self, "_on_graze_button_pressed"))
 	user_interface.get_node("VBoxContainer/Bottom/RightPanel/Actions/Forward/Haste/Button").connect("pressed", Callable(self, "_on_haste_button_pressed"))
 	user_interface.get_node("VBoxContainer/Bottom/RightPanel/Actions/LookBack/Button").connect("pressed", Callable(self, "_on_lookback_button_pressed"))
+	
+	# Access the Debugger node from the UserInterface scene
+	debugger_node = user_interface.get_node("VBoxContainer/Bottom/LeftPanel/Debugger")
+	debugger_node.visible = false  # Start with the debugger hidden
+	
 	new_game()
 
 func new_game():
@@ -133,6 +141,15 @@ func _process(delta):
 		if Input.is_action_pressed("ui_accept"):
 			game_running = true
 			$HUD.get_node("StartLabel").hide()
+
+# New function to handle input, including "0" key press for debugger visibility
+func _input(event: InputEvent):
+	if event is InputEventKey and event.pressed:
+		# Check if the "0" key is pressed
+		if Input.is_key_pressed(KEY_CTRL):
+			# Toggle the visibility of the debugger node
+			debugger_node.visible = not debugger_node.visible
+
 
 # Functions to handle button presses
 func _on_rest_button_pressed():
