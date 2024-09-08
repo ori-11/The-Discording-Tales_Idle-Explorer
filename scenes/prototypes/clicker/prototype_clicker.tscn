@@ -1,7 +1,9 @@
 [gd_scene load_steps=8 format=3 uid="uid://dk2jy2rq3vntt"]
 
 [ext_resource type="Script" path="res://scenes/prototypes/clicker/prototype_clicker.gd" id="1_8ucsi"]
-[ext_resource type="Script" path="res://scenes/user_interface/stardust_label.gd" id="2_uuqui"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_4xd8g"]
+bg_color = Color(0, 0, 0, 1)
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_2kc0s"]
 
@@ -59,7 +61,7 @@ corner_radius_bottom_right = 3
 corner_radius_bottom_left = 3
 corner_detail = 6
 
-[node name="PrototypeClicker" type="Control" node_paths=PackedStringArray("button", "timer", "progress_bar", "tooltip")]
+[node name="PrototypeClicker" type="Control" node_paths=PackedStringArray("log_label", "button", "timer", "progress_bar", "tooltip")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -69,26 +71,15 @@ grow_vertical = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 script = ExtResource("1_8ucsi")
+log_label = NodePath("")
 button = NodePath("Button")
 timer = NodePath("Timer")
 progress_bar = NodePath("Button/ProgressBar")
 tooltip = NodePath("Tooltip")
 
-[node name="Label" type="Label" parent="."]
-visible = false
-layout_mode = 1
-anchors_preset = 10
-anchor_right = 1.0
-offset_bottom = 39.0
-grow_horizontal = 2
-theme_type_variation = &"HeaderLarge"
-text = "Stardust : <value>"
-horizontal_alignment = 1
-vertical_alignment = 1
-script = ExtResource("2_uuqui")
-
 [node name="Tooltip" type="LineEdit" parent="."]
 visible = false
+z_index = 4096
 layout_mode = 1
 anchors_preset = 12
 anchor_top = 1.0
@@ -97,6 +88,9 @@ anchor_bottom = 1.0
 offset_top = -31.0
 grow_horizontal = 2
 grow_vertical = 0
+theme_override_colors/font_uneditable_color = Color(1, 1, 1, 1)
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_styles/read_only = SubResource("StyleBoxFlat_4xd8g")
 text = "Description of the action, +1 X"
 alignment = 1
 editable = false
@@ -126,7 +120,7 @@ theme_override_styles/disabled = SubResource("StyleBoxFlat_kfvlt")
 theme_override_styles/hover = SubResource("StyleBoxFlat_45io6")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_kfvlt")
 theme_override_styles/normal = SubResource("StyleBoxFlat_45io6")
-text = "Create Stardust"
+text = "Inquire"
 
 [node name="ProgressBar" type="ProgressBar" parent="Button"]
 show_behind_parent = true
@@ -144,6 +138,7 @@ fill_mode = 3
 show_percentage = false
 
 [node name="Timer" type="Timer" parent="."]
+wait_time = 3.0
 one_shot = true
 
 [connection signal="pressed" from="Button" to="." method="_on_button_pressed"]

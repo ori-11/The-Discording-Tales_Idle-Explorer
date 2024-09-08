@@ -39,8 +39,8 @@ static var ref : Game
 ## Contains the data to save and load
 var data : Data
 
-# Debugger node reference
-var debugger_node
+# Console node reference
+var console_node
 
 ## Singleton check & Data initialization
 func _enter_tree() -> void:
@@ -67,9 +67,9 @@ func _ready():
 	user_interface.get_node("VBoxContainer/Bottom/RightPanel/Actions/Forward/Haste/Button").connect("pressed", Callable(self, "_on_haste_button_pressed"))
 	user_interface.get_node("VBoxContainer/Bottom/RightPanel/Actions/LookBack/Button").connect("pressed", Callable(self, "_on_lookback_button_pressed"))
 	
-	# Access the Debugger node from the UserInterface scene
-	debugger_node = user_interface.get_node("VBoxContainer/Bottom/LeftPanel/Debugger")
-	debugger_node.visible = false  # Start with the debugger hidden
+	# Access the Console node from the UserInterface scene
+	console_node = user_interface.get_node("VBoxContainer/Bottom/LeftPanel/Console")
+	console_node.visible = false  # Start with the console hidden
 	
 	new_game()
 
@@ -142,13 +142,13 @@ func _process(delta):
 			game_running = true
 			$HUD.get_node("StartLabel").hide()
 
-# New function to handle input, including "0" key press for debugger visibility
+# New function to handle input, including "0" key press for console visibility
 func _input(event: InputEvent):
 	if event is InputEventKey and event.pressed:
 		# Check if the "0" key is pressed
 		if Input.is_key_pressed(KEY_CTRL):
-			# Toggle the visibility of the debugger node
-			debugger_node.visible = not debugger_node.visible
+			# Toggle the visibility of the console node
+			console_node.visible = not console_node.visible
 
 
 # Functions to handle button presses

@@ -1,8 +1,17 @@
 class_name PrototypeClicker
 extends Control
 
-@export var view: UserInterface.Views
-@export var user_interface: UserInterface
+# Exported variables to configure different resource types, amount, tooltip, and chat log messages
+@export var resource_type: String = "Knowledge"  # Define the type of resource (e.g., "Knowledge", "Wood", "Gold")
+@export var min_amount: int = 1  # Minimum amount of resource to generate
+@export var max_amount: int = 3  # Maximum amount of resource to generate
+@export var tooltip_description: String = "This button creates a resource and has a cooldown."  # Tooltip text
+@export var chat_log_message: String = "Created {amount} {resource}!"  # Custom message for the chat log
+
+# Exported timer configuration
+@export var timer_length: float = 5.0  # Time delay for cooldown in seconds
+
+# References to UI elements
 @export var log_label: Label  # Label node for displaying the chat log
 @export var button: Button  # Reference to the Button
 @export var timer: Timer  # Timer for controlling click delay
@@ -10,12 +19,10 @@ extends Control
 @export var tooltip: LineEdit  # Reference to the LineEdit node for the tooltip
 
 var elapsed_time = 0.0  # To track the time progression
-var tooltip_description = "This button creates stardust and has a cooldown."  # Tooltip text
 
 ## Initialize the label at launch
 func _ready() -> void:
 	visible = true
-	user_interface.navigation_requested.connect(Callable(self, "_on_navigation_request"))
 	button.pressed.connect(Callable(self, "_on_button_pressed"))
 	
 	# Connect the mouse enter and exit signals to the button
@@ -27,34 +34,35 @@ func _ready() -> void:
 		tooltip.editable = false  # Disable editing for the tooltip
 		tooltip.visible = false  # Start hidden
 
+	# Set the timer's wait time from the exported variable
+	timer.wait_time = timer_length
 	timer.connect("timeout", Callable(self, "_on_timer_timeout"))
-	
+
+	# Initialize progress bar values
 	progress_bar.min_value = 0  # Set the progress bar minimum value
 	progress_bar.max_value = 100  # Set the progress bar max value to 100
 	progress_bar.value = 0  # Start with the bar at 0
 
-## Create stardust and add a message to the log
-func create_stardust() -> void:
-	HandlerStardust.ref.create_stardust(1)
-	add_to_chat_log("Created stardust!")
+## Function to create the resource
+func create_resource() -> void:
+	var amount = randi_range(min_amount, max_amount)  # Generate a random amount of the resource between min_amount and max_amount
+	
+	# Create resources based on the specified resource type
+	HandlerResources.ref.create_resource(resource_type, amount)
+
+	# Add the appropriate message to the chat log
+	var message = chat_log_message.replace("{amount}", str(amount)).replace("{resource}", resource_type)
+	add_to_chat_log(message)
 
 ## Function to add a message to the chat log
 func add_to_chat_log(message: String) -> void:
 	log_label.text = message + "\n" + log_label.text
-
-## Watch the signal and react to it
-func _on_navigation_request(requested_view: UserInterface.Views) -> void:
-	if requested_view == view:
-		visible = true
-		return
-	visible = false
 
 ## Triggered when the button is pressed
 func _on_button_pressed() -> void:
 	if button.disabled:  # If the button is disabled, ignore the press
 		return
 	
-	create_stardust()
 	button.disabled = true  # Disable the button after pressing
 	elapsed_time = 0.0  # Reset the elapsed time
 	progress_bar.value = 0  # Reset the progress bar value to 0
@@ -65,8 +73,9 @@ func _on_button_pressed() -> void:
 	
 	timer.start()  # Start the timer
 
-## Called when the timer times out
+## Called when the timer times out (resource is created after the timer ends)
 func _on_timer_timeout() -> void:
+	create_resource()  # Resource is created only after the timer finishes
 	button.disabled = false  # Re-enable the button when the timer finishes
 	progress_bar.value = 0  # Reset the bar when cooldown is over
 
@@ -79,7 +88,7 @@ func _on_button_mouse_entered() -> void:
 		# Position tooltip below the button
 		var global_position = button.get_global_transform().origin
 		var button_size = button.get_size()  # Get the button size
-		tooltip.global_position = global_position + Vector2(0, button_size.y)
+		tooltip.global_position = global_position + Vector2(5, button_size.y)
 
 ## Handle mouse exit: hide the tooltip
 func _on_button_mouse_exited() -> void:

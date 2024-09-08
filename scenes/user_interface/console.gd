@@ -5,13 +5,13 @@ var button_actions := {}
 var input_dialog: LineEdit = null  # Store reference to the input dialog
 
 func _ready() -> void:
-	# Find the ButtonStardust and connect it
-	var stardust_button = $ButtonStardust
-	# Map the button to its action: prompting for stardust amount
-	button_actions[stardust_button] = Callable(self, "_toggle_stardust_input")
+	# Find the ButtonKnowledge and connect it
+	var knowledge_button = $ButtonKnowledge
+	# Map the button to its action: prompting for knowledge amount
+	button_actions[knowledge_button] = Callable(self, "_toggle_knowledge_input")
 	
 	# Connect the button press signal to the generic handler
-	stardust_button.connect("pressed", Callable(self, "_on_button_pressed").bind(stardust_button))
+	knowledge_button.connect("pressed", Callable(self, "_on_button_pressed").bind(knowledge_button))
 
 
 # General button press handler
@@ -19,8 +19,8 @@ func _on_button_pressed(button: Button) -> void:
 	if button in button_actions:
 		button_actions[button].call()
 
-# Function to toggle visibility of the stardust input dialog
-func _toggle_stardust_input() -> void:
+# Function to toggle visibility of the knowledge input dialog
+func _toggle_knowledge_input() -> void:
 	# If input_dialog already exists, toggle its visibility and clear text
 	if input_dialog:
 		input_dialog.visible = not input_dialog.visible
@@ -31,13 +31,13 @@ func _toggle_stardust_input() -> void:
 
 	# Otherwise, create the input dialog
 	input_dialog = LineEdit.new()
-	input_dialog.placeholder_text = "Enter amount of stardust (+ to add, - to remove)"
+	input_dialog.placeholder_text = "Enter amount of knowledge (+ to add, - to remove)"
 	input_dialog.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	input_dialog.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	add_child(input_dialog)
 
 	# Connect the 'text_submitted' signal to confirm the input
-	input_dialog.connect("text_submitted", Callable(self, "_on_stardust_amount_entered"))
+	input_dialog.connect("text_submitted", Callable(self, "_on_knowledge_amount_entered"))
 
 	# Connect the 'text_changed' signal to restrict input to valid characters
 	input_dialog.connect("text_changed", Callable(self, "_validate_input"))
@@ -56,26 +56,26 @@ func _validate_input() -> void:
 	input_dialog.text = new_text
 
 # Function to handle the amount entered by the user
-func _on_stardust_amount_entered(amount_str: String) -> void:
+func _on_knowledge_amount_entered(amount_str: String) -> void:
 	# Parse the entered text into an integer
 	var amount = amount_str.to_int()
 
-	# Update the stardust based on the amount entered
+	# Update the knowledge based on the amount entered
 	if amount != 0:
 		if amount > 0:
-			HandlerStardust.ref.create_stardust(amount)
-			print("Added ", amount, " stardust! Current stardust: ", HandlerStardust.ref.stardust())
+			HandlerResources.ref.create_knowledge(amount)
+			print("Added ", amount, " knowledge! Current knowledge: ", HandlerResources.ref.knowledge())
 		else:
 			# If the amount is negative, try to remove that much, but clamp at 0
-			var current_stardust = HandlerStardust.ref.stardust()
+			var current_knowledge = HandlerResources.ref.knowledge()
 			var remove_amount = abs(amount)
 			
-			# If remove_amount is greater than current stardust, just set to 0
-			if remove_amount > current_stardust:
-				remove_amount = current_stardust
+			# If remove_amount is greater than current knowledge, just set to 0
+			if remove_amount > current_knowledge:
+				remove_amount = current_knowledge
 			
-			HandlerStardust.ref.consume_stardust(remove_amount)
-			print("Removed ", remove_amount, " stardust! Current stardust: ", HandlerStardust.ref.stardust())
+			HandlerResources.ref.consume_knowledge(remove_amount)
+			print("Removed ", remove_amount, " knowledge! Current knowledge: ", HandlerResources.ref.knowledge())
 	else:
 		print("No valid amount entered.")
 

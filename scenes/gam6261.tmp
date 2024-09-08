@@ -1,7 +1,7 @@
 [gd_scene load_steps=10 format=3 uid="uid://bju4jxwr7a0pg"]
 
 [ext_resource type="Script" path="res://scenes/game.gd" id="1_iwj3v"]
-[ext_resource type="Script" path="res://scripts/handlers/handler_resources.gd" id="3_uuwla"]
+[ext_resource type="Script" path="res://scripts/handlers/handler_knowledge.gd" id="3_uuwla"]
 [ext_resource type="PackedScene" uid="uid://duq6md8kiakk4" path="res://scenes/bg2.tscn" id="9_8658u"]
 [ext_resource type="PackedScene" uid="uid://dnvqc0nbfjk0b" path="res://scenes/groundsegment.tscn" id="9_re738"]
 [ext_resource type="PackedScene" uid="uid://bpkphu8qj137m" path="res://scenes/bg.tscn" id="10_nrarm"]
@@ -15,7 +15,7 @@ script = ExtResource("1_iwj3v")
 
 [node name="Handlers" type="Node" parent="."]
 
-[node name="Resources" type="Node" parent="Handlers"]
+[node name="Knowledge" type="Node" parent="Handlers"]
 script = ExtResource("3_uuwla")
 
 [node name="Bg" parent="." instance=ExtResource("10_nrarm")]

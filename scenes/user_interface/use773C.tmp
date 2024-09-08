@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" path="res://scenes/user_interface/user_interface.gd" id="1_knqjo"]
 [ext_resource type="Script" path="res://scenes/user_interface/console.gd" id="2_hnqqk"]
-[ext_resource type="Script" path="res://scenes/user_interface/label_resource.gd" id="2_vjwei"]
+[ext_resource type="Script" path="res://scenes/user_interface/stardust_label.gd" id="2_vjwei"]
 [ext_resource type="PackedScene" uid="uid://dk2jy2rq3vntt" path="res://scenes/prototypes/clicker/prototype_clicker.tscn" id="3_byq0d"]
 [ext_resource type="Script" path="res://scenes/user_interface/map.gd" id="5_r5lb0"]
 
@@ -169,59 +169,30 @@ layout_mode = 2
 size_flags_horizontal = 3
 size_flags_stretch_ratio = 0.25
 
-[node name="MarginContainer" type="MarginContainer" parent="VBoxContainer/Bottom/RightPanel/Tabs/TabContainer/Colony/VBoxContainer"]
+[node name="MarginContainer2" type="MarginContainer" parent="VBoxContainer/Bottom/RightPanel/Tabs/TabContainer/Colony/VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 3
-size_flags_stretch_ratio = 0.2
 theme_override_constants/margin_left = 16
 theme_override_constants/margin_top = 16
 theme_override_constants/margin_right = 16
 theme_override_constants/margin_bottom = 16
 
-[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/Bottom/RightPanel/Tabs/TabContainer/Colony/VBoxContainer/MarginContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/Bottom/RightPanel/Tabs/TabContainer/Colony/VBoxContainer/MarginContainer2"]
 layout_mode = 2
 
-[node name="PrototypeClicker" parent="VBoxContainer/Bottom/RightPanel/Tabs/TabContainer/Colony/VBoxContainer/MarginContainer/VBoxContainer" node_paths=PackedStringArray("log_label") instance=ExtResource("3_byq0d")]
-layout_mode = 2
-size_flags_horizontal = 1
-log_label = NodePath("../../../../../../../../LeftPanel/ScrollContainer/ChatLog")
-
-[node name="Request" type="MarginContainer" parent="VBoxContainer/Bottom/RightPanel/Tabs/TabContainer/Colony/VBoxContainer"]
-layout_mode = 2
-size_flags_vertical = 3
-theme_override_constants/margin_left = 16
-theme_override_constants/margin_right = 16
-
-[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/Bottom/RightPanel/Tabs/TabContainer/Colony/VBoxContainer/Request"]
-layout_mode = 2
-size_flags_vertical = 2
-
-[node name="Label" type="Label" parent="VBoxContainer/Bottom/RightPanel/Tabs/TabContainer/Colony/VBoxContainer/Request/VBoxContainer"]
-layout_mode = 2
-size_flags_vertical = 0
-text = "Request"
-horizontal_alignment = 1
-
-[node name="HSeparator" type="HSeparator" parent="VBoxContainer/Bottom/RightPanel/Tabs/TabContainer/Colony/VBoxContainer/Request/VBoxContainer"]
-layout_mode = 2
-size_flags_vertical = 8
-
-[node name="PrototypeClicker" parent="VBoxContainer/Bottom/RightPanel/Tabs/TabContainer/Colony/VBoxContainer/Request/VBoxContainer" node_paths=PackedStringArray("log_label") instance=ExtResource("3_byq0d")]
+[node name="PrototypeClicker" parent="VBoxContainer/Bottom/RightPanel/Tabs/TabContainer/Colony/VBoxContainer/MarginContainer2/VBoxContainer" node_paths=PackedStringArray("user_interface", "log_label") instance=ExtResource("3_byq0d")]
 layout_mode = 2
 size_flags_horizontal = 1
-resource_type = "Gold"
-timer_length = 1.0
+view = 1
+user_interface = NodePath("../../../../../../../../../..")
 log_label = NodePath("../../../../../../../../LeftPanel/ScrollContainer/ChatLog")
 
-[node name="Button" parent="VBoxContainer/Bottom/RightPanel/Tabs/TabContainer/Colony/VBoxContainer/Request/VBoxContainer/PrototypeClicker" index="1"]
-text = "Colon"
-
-[node name="MarginContainer2" type="MarginContainer" parent="VBoxContainer/Bottom/RightPanel/Tabs/TabContainer/Colony/VBoxContainer"]
+[node name="MarginContainer" type="MarginContainer" parent="VBoxContainer/Bottom/RightPanel/Tabs/TabContainer/Colony/VBoxContainer"]
 layout_mode = 2
 theme_override_constants/margin_left = 16
 theme_override_constants/margin_right = 16
 
-[node name="HSeparator" type="HSeparator" parent="VBoxContainer/Bottom/RightPanel/Tabs/TabContainer/Colony/VBoxContainer/MarginContainer2"]
+[node name="HSeparator" type="HSeparator" parent="VBoxContainer/Bottom/RightPanel/Tabs/TabContainer/Colony/VBoxContainer/MarginContainer"]
 layout_mode = 2
 
 [node name="Resources" type="Control" parent="VBoxContainer/Bottom/RightPanel/Tabs/TabContainer/Colony/VBoxContainer"]
@@ -243,16 +214,10 @@ theme_override_constants/margin_bottom = 16
 [node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/Bottom/RightPanel/Tabs/TabContainer/Colony/VBoxContainer/Resources/MarginContainer"]
 layout_mode = 2
 
-[node name="Knowledge" type="Label" parent="VBoxContainer/Bottom/RightPanel/Tabs/TabContainer/Colony/VBoxContainer/Resources/MarginContainer/VBoxContainer"]
+[node name="StardustLabel" type="Label" parent="VBoxContainer/Bottom/RightPanel/Tabs/TabContainer/Colony/VBoxContainer/Resources/MarginContainer/VBoxContainer"]
 layout_mode = 2
-text = "Knowledge : 0"
+text = "Stardust : 15"
 script = ExtResource("2_vjwei")
-
-[node name="Gold" type="Label" parent="VBoxContainer/Bottom/RightPanel/Tabs/TabContainer/Colony/VBoxContainer/Resources/MarginContainer/VBoxContainer"]
-layout_mode = 2
-text = "Gold : 15"
-script = ExtResource("2_vjwei")
-resource_type = "Gold"
 
 [node name="VBoxContainer2" type="VBoxContainer" parent="VBoxContainer/Bottom/RightPanel/Tabs/TabContainer/Colony"]
 layout_mode = 2
@@ -328,5 +293,3 @@ theme_override_constants/margin_bottom = 16
 
 [node name="VSeparator" type="VSeparator" parent="VBoxContainer/Bottom/Margin2"]
 layout_mode = 2
-
-[editable path="VBoxContainer/Bottom/RightPanel/Tabs/TabContainer/Colony/VBoxContainer/Request/VBoxContainer/PrototypeClicker"]
