@@ -42,19 +42,17 @@ size_flags_stretch_ratio = 0.19
 
 [node name="ScrollContainer" type="ScrollContainer" parent="VBoxContainer/Bottom/LeftPanel"]
 custom_minimum_size = Vector2(208, 0)
-layout_mode = 2
-offset_left = 16.0
-offset_top = 16.0
-offset_right = 224.0
-offset_bottom = 634.0
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 size_flags_vertical = 3
+horizontal_scroll_mode = 0
 
-[node name="ChatLog" type="Label" parent="VBoxContainer/Bottom/LeftPanel/ScrollContainer" groups=["chat_log_group"]]
-custom_minimum_size = Vector2(208, 0)
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/Bottom/LeftPanel/ScrollContainer" groups=["chat_log"]]
 layout_mode = 2
-size_flags_horizontal = 3
-size_flags_vertical = 3
-autowrap_mode = 1
 
 [node name="Console" type="VBoxContainer" parent="VBoxContainer/Bottom/LeftPanel"]
 visible = false
@@ -184,10 +182,10 @@ theme_override_constants/margin_bottom = 16
 [node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/Bottom/RightPanel/Tabs/TabContainer/Colony/VBoxContainer/MarginContainer"]
 layout_mode = 2
 
-[node name="PrototypeClicker" parent="VBoxContainer/Bottom/RightPanel/Tabs/TabContainer/Colony/VBoxContainer/MarginContainer/VBoxContainer" node_paths=PackedStringArray("log_label") instance=ExtResource("3_byq0d")]
+[node name="PrototypeClicker" parent="VBoxContainer/Bottom/RightPanel/Tabs/TabContainer/Colony/VBoxContainer/MarginContainer/VBoxContainer" node_paths=PackedStringArray("chat_log_container") instance=ExtResource("3_byq0d")]
 layout_mode = 2
 size_flags_horizontal = 1
-log_label = NodePath("../../../../../../../../LeftPanel/ScrollContainer/ChatLog")
+chat_log_container = NodePath("../../../../../../../../LeftPanel/ScrollContainer/VBoxContainer")
 
 [node name="Request" type="MarginContainer" parent="VBoxContainer/Bottom/RightPanel/Tabs/TabContainer/Colony/VBoxContainer"]
 layout_mode = 2
@@ -209,12 +207,12 @@ horizontal_alignment = 1
 layout_mode = 2
 size_flags_vertical = 8
 
-[node name="PrototypeClicker" parent="VBoxContainer/Bottom/RightPanel/Tabs/TabContainer/Colony/VBoxContainer/Request/VBoxContainer" node_paths=PackedStringArray("log_label") instance=ExtResource("3_byq0d")]
+[node name="PrototypeClicker" parent="VBoxContainer/Bottom/RightPanel/Tabs/TabContainer/Colony/VBoxContainer/Request/VBoxContainer" node_paths=PackedStringArray("chat_log_container") instance=ExtResource("3_byq0d")]
 layout_mode = 2
 size_flags_horizontal = 1
 resource_type = "Gold"
 timer_length = 1.0
-log_label = NodePath("../../../../../../../../LeftPanel/ScrollContainer/ChatLog")
+chat_log_container = NodePath("../../../../../../../../LeftPanel/ScrollContainer/VBoxContainer")
 
 [node name="Button" parent="VBoxContainer/Bottom/RightPanel/Tabs/TabContainer/Colony/VBoxContainer/Request/VBoxContainer/PrototypeClicker" index="1"]
 text = "Colon"

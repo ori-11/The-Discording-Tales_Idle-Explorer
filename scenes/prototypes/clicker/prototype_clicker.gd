@@ -12,7 +12,7 @@ extends Control
 @export var timer_length: float = 5.0  # Time delay for cooldown in seconds
 
 # References to UI elements
-@export var log_label: Label  # Label node for displaying the chat log
+@export var chat_log_container: VBoxContainer  # VBoxContainer for displaying chat log messages
 @export var button: Button  # Reference to the Button
 @export var timer: Timer  # Timer for controlling click delay
 @export var progress_bar: ProgressBar  # Reference to the ProgressBar
@@ -20,7 +20,7 @@ extends Control
 
 var elapsed_time = 0.0  # To track the time progression
 
-## Initialize the label at launch
+## Initialize the button, signals, and UI at launch
 func _ready() -> void:
 	visible = true
 	button.pressed.connect(Callable(self, "_on_button_pressed"))
@@ -54,9 +54,18 @@ func create_resource() -> void:
 	var message = chat_log_message.replace("{amount}", str(amount)).replace("{resource}", resource_type)
 	add_to_chat_log(message)
 
-## Function to add a message to the chat log
+## Function to add a message to the chat log (now using VBoxContainer)
 func add_to_chat_log(message: String) -> void:
-	log_label.text = message + "\n" + log_label.text
+	if chat_log_container:
+		# Create a new Label node for the message
+		var new_message_label = Label.new()
+		new_message_label.text = message
+
+		# Add the new message at the top of the VBoxContainer
+		chat_log_container.add_child(new_message_label)
+		chat_log_container.move_child(new_message_label, 0)  # Move it to the top
+	else:
+		print("ChatLog container not set")
 
 ## Triggered when the button is pressed
 func _on_button_pressed() -> void:

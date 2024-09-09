@@ -12,26 +12,42 @@ var current_path_index = 0  # Index of the current tile in the path
 var tile_size: Vector2  # Size of each tile
 var tile_type_data: Array = []  # Array to store tile types along the path
 
-var log_label: Label  # Label node where messages will be displayed
+var chat_log: VBoxContainer  # Reference to the VBoxContainer (chat log)
 
 # Speed reduction percentages by tile type
 var tile_speed_reduction = {
 	"Steppes": 0.0,       # 0% reduction
-	"Dunes": 0.15,         # 20% reduction
-	"Forest": 0.30,        # 40% reduction
-	"Hills": 0.45,         # 60% reduction
-	"Hot Spring": 0.60,    # 80% reduction
+	"Dunes": 0.15,        # 20% reduction
+	"Forest": 0.30,       # 40% reduction
+	"Hills": 0.45,        # 60% reduction
+	"Hot Spring": 0.60,   # 80% reduction
 	"Default": 0.0        # Default reduction for unlisted tile types
 }
 
 # Called when the node enters the scene tree for the first time
 func _ready():
-	var chat_log_group = get_tree().get_nodes_in_group("chat_log_group")
+	# Retrieve the chat log VBoxContainer via the group
+	var chat_log_group = get_tree().get_nodes_in_group("chat_log")
 	
 	if chat_log_group.size() > 0:
-		log_label = chat_log_group[0]  # Assuming there's only one ChatLog label in the group
+		chat_log = chat_log_group[0] as VBoxContainer  # Assuming there's only one chat log container
 	else:
-		print("ChatLog not found in the group")
+		print("ChatLog VBoxContainer not found in the group")
+
+# Function to add a new message to the chat log
+func add_chat_message(message: String):
+	if chat_log:
+		# Create a new Label node for the message
+		var new_message_label = Label.new()
+		new_message_label.text = message
+
+		# Add the message label to the VBoxContainer
+		chat_log.add_child(new_message_label)
+
+		# Move the newly added label to the top of the VBoxContainer
+		chat_log.move_child(new_message_label, 0)
+	else:
+		print("ChatLog container not set")
 
 # Move the player along the calculated path and pass the tile types for each tile
 func move_along_path(path: Array, tile_size_param: Vector2, tile_type_array: Array):
@@ -55,10 +71,7 @@ func move_to_next_tile():
 		minimum_speed = base_min_speed * (1.0 - reduction)  # Min speed after reduction
 		
 		# Update chat log with message
-		if log_label:
-			log_label.text += "Crossing " + tile_type + "\n"
-		else:
-			print("Crossing ", tile_type)  # Fallback to print if no Label is set
+		add_chat_message("Crossing " + tile_type)
 
 		# Calculate the target position by converting tile coordinates to world coordinates
 		target_position = (current_path[current_path_index] * tile_size) + (tile_size / 2)
