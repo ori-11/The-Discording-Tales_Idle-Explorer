@@ -1,0 +1,25 @@
+[gd_scene load_steps=4 format=3 uid="uid://dymrylwgfknrq"]
+
+[ext_resource type="Script" path="res://player.gd" id="1_lfohr"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_4s6t3"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_2uheo"]
+
+[node name="Player" type="CharacterBody2D"]
+script = ExtResource("1_lfohr")
+
+[node name="Button" type="Button" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/focus = SubResource("StyleBoxEmpty_4s6t3")
+button_mask = 0
+text = "♛"
+flat = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+visible = false
+shape = SubResource("RectangleShape2D_2uheo")

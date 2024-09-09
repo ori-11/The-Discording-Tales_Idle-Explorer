@@ -2,16 +2,19 @@ extends Control  # or Node2D
 
 # Symbols for various map elements
 const SYMBOL_DUNE = "𓂃"
-const SYMBOL_STEPPE = "𓇢"
+const SYMBOL_STEPPE = " "
 const SYMBOL_HOT_SPRING = "◌"
 const SYMBOL_HILL = "︿"
 const SYMBOL_FOREST = "𓍊𓋼"
 const SYMBOL_OUTPOST = "✪"
 
 # Map size and tile settings
-var map_size = Vector2(45, 23)
-var tile_size = Vector2(12, 12)  # Set the size for each tile
+var map_size = Vector2(40, 40)
+var tile_size = Vector2(22, 22)  # Set the size for each tile
 var noise = FastNoiseLite.new()
+
+# Pathfinding using AStar2D
+var astar = AStar2D.new()
 
 # Map data
 var biome_data = []
@@ -34,6 +37,7 @@ var restricted_map_max = Vector2(map_size.x - 4, map_size.y - 4)
 
 # Theme resource variable
 var tile_theme: Theme
+var player
 
 func _ready():
 	# Load the theme from the specified path
@@ -47,19 +51,100 @@ func _ready():
 	noise.fractal_gain = 0.5
 	noise.fractal_lacunarity = 2.0
 
-	var grid = GridContainer.new()
-	grid.columns = int(map_size.x)  # Set the number of columns
-
-	# Enable theme overrides for hseparation and vseparation and set them to 0
-	grid.add_theme_constant_override("h_separation", -3)
-	grid.add_theme_constant_override("v_separation", -3)
-
-	add_child(grid)
-
+	# Remove GridContainer and manually layout tiles
 	generate_map_data()
 	place_oases()
 	place_outposts()
-	generate_map(grid)
+	generate_map()
+
+	# Set up AStar for pathfinding
+	setup_astar_grid()
+
+	# Instance the player and place it on the center tile (Colony)
+	player = preload("res://player.tscn").instantiate()
+	add_child(player)
+	var center_x = int(map_size.x / 2)
+	var center_y = int(map_size.y / 2)
+	player.position = Vector2(center_x * tile_size.x, center_y * tile_size.y)
+
+# Function to generate the interactive map manually
+func generate_map() -> void:
+	var center_x = int(map_size.x / 2)
+	var center_y = int(map_size.y / 2)
+
+	for y in range(map_size.y):
+		for x in range(map_size.x):
+			var index = y * map_size.x + x
+			var tile_data = biome_data[index]
+
+			# Create a button to represent each tile
+			var tile = Button.new()
+			tile.custom_minimum_size = tile_size
+			tile.text = tile_data.symbol
+			tile.flat = false
+			tile.theme = tile_theme
+			tile.focus_mode = Control.FOCUS_NONE
+
+			# Set the position manually (convert grid coordinates to world coordinates)
+			tile.position = Vector2(x * tile_size.x, y * tile_size.y)
+
+			# Set the Colony tile in the center
+			if x == center_x and y == center_y:
+				tile.text = "⛨"  # Colony symbol
+
+			# Connect the tile's press event to move the player
+			tile.connect("pressed", Callable(self, "_on_tile_pressed").bind(x, y))
+
+			# Add the tile to the scene tree (no GridContainer, manual layout)
+			add_child(tile)
+
+# Setup the AStar2D grid for pathfinding
+func setup_astar_grid():
+	for y in range(map_size.y):
+		for x in range(map_size.x):
+			var id = get_tile_id(x, y)
+			var pos = Vector2(x, y)
+			astar.add_point(id, pos)
+	
+	# Connect neighboring tiles in 4 directions (up, down, left, right)
+	for y in range(map_size.y):
+		for x in range(map_size.x):
+			var id = get_tile_id(x, y)
+			for offset in [Vector2(1, 0), Vector2(-1, 0), Vector2(0, 1), Vector2(0, -1)]:
+				var neighbor_pos = Vector2(x, y) + offset
+				if is_valid_tile(neighbor_pos.x, neighbor_pos.y):
+					var neighbor_id = get_tile_id(neighbor_pos.x, neighbor_pos.y)
+					astar.connect_points(id, neighbor_id)
+
+# Utility function to get a unique ID for each tile
+func get_tile_id(x: int, y: int) -> int:
+	return y * map_size.x + x
+
+# Utility function to check if a tile is valid for movement
+func is_valid_tile(x: int, y: int) -> bool:
+	# Example: Check if the tile is within bounds and not an obstacle
+	return x >= 0 and x < map_size.x and y >= 0 and y < map_size.y
+
+# Function to handle tile clicks and move the player along the path
+func _on_tile_pressed(x: int, y: int) -> void:
+	var start_tile_id = get_tile_id(int(player.position.x / tile_size.x), int(player.position.y / tile_size.y))
+	var target_tile_id = get_tile_id(x, y)
+	
+	if astar.has_point(start_tile_id) and astar.has_point(target_tile_id):
+		var path = astar.get_point_path(start_tile_id, target_tile_id)
+
+		# Create an array of tile types along the path
+		var tile_types = []
+		for tile_pos in path:
+			var tile_index = int(tile_pos.y) * map_size.x + int(tile_pos.x)
+			tile_types.append(biome_data[tile_index]["biome"])  # Append the biome (tile type) of each tile
+		
+		player.move_along_path(path, tile_size, tile_types)  # Pass the path, tile size, and tile types to the player
+
+	var tile_data = biome_data[y * map_size.x + x]
+	print("Tile pressed at: ", x, ", ", y)
+	print("Biome: ", tile_data.biome)
+	print("Symbol: ", tile_data.symbol)
 
 # Function to generate the base terrain (dunes/steppes)
 func generate_map_data() -> void:
@@ -181,33 +266,7 @@ func get_min_distance_to_other_outposts(position: Vector2) -> float:
 		if tile.biome == "Outpost":
 			min_distance = min(min_distance, position.distance_to(Vector2(tile["x"], tile["y"])))
 	return min_distance
-
-# Generate the interactive map (Updated)
-func generate_map(grid: GridContainer) -> void:
-	for y in range(map_size.y):
-		for x in range(map_size.x):
-			var index = y * map_size.x + x
-			var tile_data = biome_data[index]
-
-			# Create a button to represent a tile
-			var tile = Button.new()
-			tile.custom_minimum_size = tile_size  # Set uniform button size
-			tile.text = tile_data.symbol  # Set the symbol as the button's text
-			tile.flat = false  # Remove any border or decoration
-			tile.theme = tile_theme  # Apply the loaded theme to the tile
-			tile.focus_mode = Control.FOCUS_NONE  # Disable focus
-			tile.connect("pressed", Callable(self, "_on_tile_pressed").bind(x, y))
-			
-			# Add the tile to the grid
-			grid.add_child(tile)
-
-# Handle tile interactions
-func _on_tile_pressed(x: int, y: int) -> void:
-	var tile_data = biome_data[y * map_size.x + x]
-	print("Tile pressed at: ", x, ", ", y)
-	print("Biome: ", tile_data.biome)
-	print("Symbol: ", tile_data.symbol)
-
+	
 # Utility: Get tile distance from map borders
 func get_tile_border_distance(x: int, y: int) -> int:
 	return min(min(x, map_size.x - 1 - x), min(y, map_size.y - 1 - y)) + 1
