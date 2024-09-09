@@ -199,7 +199,7 @@ size_flags_vertical = 2
 [node name="Label" type="Label" parent="VBoxContainer/Bottom/RightPanel/Tabs/TabContainer/Colony/VBoxContainer/Request/VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 0
-text = "Requests"
+text = "Request"
 horizontal_alignment = 1
 
 [node name="HSeparator" type="HSeparator" parent="VBoxContainer/Bottom/RightPanel/Tabs/TabContainer/Colony/VBoxContainer/Request/VBoxContainer"]

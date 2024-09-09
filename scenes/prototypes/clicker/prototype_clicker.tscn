@@ -61,7 +61,7 @@ corner_radius_bottom_right = 3
 corner_radius_bottom_left = 3
 corner_detail = 6
 
-[node name="PrototypeClicker" type="Control" node_paths=PackedStringArray("log_label", "button", "timer", "progress_bar", "tooltip")]
+[node name="PrototypeClicker" type="Control" node_paths=PackedStringArray("button", "timer", "progress_bar", "tooltip")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -71,7 +71,6 @@ grow_vertical = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 script = ExtResource("1_8ucsi")
-log_label = NodePath("")
 button = NodePath("Button")
 timer = NodePath("Timer")
 progress_bar = NodePath("Button/ProgressBar")
