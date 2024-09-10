@@ -15,6 +15,9 @@ var noise = FastNoiseLite.new()
 
 # Pathfinding using AStar2D
 var astar = AStar2D.new()
+# Path line
+var path_line: Line2D
+
 
 # Map data
 var biome_data = []
@@ -40,6 +43,16 @@ var tile_theme: Theme
 var player
 
 func _ready():
+		# Create the Line2D node for the path
+	path_line = Line2D.new()
+	path_line.width = 2
+	path_line.default_color = Color(1.0, 1.0, 1.0)  # white color
+	
+
+	path_line.set_material(material)
+
+	# Add the Line2D node to the scene
+	add_child(path_line)
 	# Load the theme from the specified path
 	tile_theme = load("res://theme.tres")
 
@@ -139,13 +152,30 @@ func _on_tile_pressed(x: int, y: int) -> void:
 			var tile_index = int(tile_pos.y) * map_size.x + int(tile_pos.x)
 			tile_types.append(biome_data[tile_index]["biome"])  # Append the biome (tile type) of each tile
 		
-		player.move_along_path(path, tile_size, tile_types)  # Pass the path, tile size, and tile types to the player
+		# Clear the previous path (if any) before drawing the new one
+		path_line.clear_points()
 
-	var tile_data = biome_data[y * map_size.x + x]
-	print("Tile pressed at: ", x, ", ", y)
-	print("Biome: ", tile_data.biome)
-	print("Symbol: ", tile_data.symbol)
+		# Add points to the Line2D for the path
+		for point in path:
+			path_line.add_point(point * tile_size + tile_size / 2)  # Adjust for tile size
+		
+		# Move the player along the path
+		player.move_along_path(path, tile_size, tile_types)
 
+		var tile_data = biome_data[y * map_size.x + x]
+		print("Tile pressed at: ", x, ", ", y)
+		print("Biome: ", tile_data.biome)
+		print("Symbol: ", tile_data.symbol)
+
+# Utility function to clear the path line
+func clear_path_line():
+	path_line.clear_points()
+
+# Add a _process function to track the player's movement and clear the line when the destination is reached
+func _process(delta):
+	if not player.is_moving:
+		# When the player has reached the destination, clear the path line
+		clear_path_line()
 # Function to generate the base terrain (dunes/steppes)
 func generate_map_data() -> void:
 	for y in range(map_size.y):

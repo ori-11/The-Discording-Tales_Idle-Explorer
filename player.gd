@@ -13,13 +13,14 @@ var tile_size: Vector2  # Size of each tile
 var tile_type_data: Array = []  # Array to store tile types along the path
 
 var chat_log: VBoxContainer  # Reference to the VBoxContainer (chat log)
+var message_sent = false  # Flag to check if message has already been sent for the current tile
 
 # Speed reduction percentages by tile type
 var tile_speed_reduction = {
 	"Steppes": 0.0,       # 0% reduction
 	"Dunes": 0.15,        # 20% reduction
 	"Forest": 0.30,       # 40% reduction
-	"Hills": 0.45,        # 60% reduction
+	"Hills": 1.0,        # 60% reduction
 	"Hot Spring": 0.60,   # 80% reduction
 	"Default": 0.0        # Default reduction for unlisted tile types
 }
@@ -70,8 +71,10 @@ func move_to_next_tile():
 		dynamic_speed = move_speed * (1.0 - reduction)  # Max speed after reduction
 		minimum_speed = base_min_speed * (1.0 - reduction)  # Min speed after reduction
 		
-		# Update chat log with message
-		add_chat_message("Crossing " + tile_type)
+		# Only add the message if it hasn't already been sent for this tile
+		if not message_sent:
+			add_chat_message("Crossing " + tile_type)
+			message_sent = true  # Mark the message as sent
 
 		# Calculate the target position by converting tile coordinates to world coordinates
 		target_position = (current_path[current_path_index] * tile_size) + (tile_size / 2)
@@ -88,6 +91,7 @@ func _process(delta):
 			position = target_position
 			current_path_index += 1
 			is_moving = false
+			message_sent = false  # Reset the message flag for the next tile
 
 			# If there are more tiles in the path, move to the next one
 			if current_path_index < current_path.size():

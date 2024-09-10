@@ -13,18 +13,18 @@ func _ready() -> void:
 	user_interface.navigation_requested.connect(_on_navigation_request)
 	button.pressed.connect(_on_button_pressed)  # Connect the button signal to the function
 
-func create_stardust() -> void:
-	HandlerStardust.ref.create_stardust(1)
+func create_knowledge() -> void:
+	HandlerResources.ref.create_knowledge(1)
 	
 ## Start the timer AND disable the button
-func begin_generating_stardust() -> void:
+func begin_generating_knowledge() -> void:
 	timer.start()
 	button.disabled = true
 
 ## Triggered when the button is pressed
 func _on_button_pressed() -> void:
 	add_to_chat_log("Starting to collect...")
-	begin_generating_stardust()
+	begin_generating_knowledge()
 
 ## Function to add a message to the chat log
 func add_to_chat_log(message: String) -> void:
@@ -32,7 +32,7 @@ func add_to_chat_log(message: String) -> void:
 
 ## Triggered when the Timer is out - every .1s
 func _on_timer_timeout() -> void:
-	create_stardust()
+	create_knowledge()
 
 ## Watch for navigation requests and react accordingly
 func _on_navigation_request(requested_view: UserInterface.Views) -> void:
