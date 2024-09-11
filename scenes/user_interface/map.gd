@@ -7,6 +7,7 @@ const SYMBOL_HOT_SPRING = "◌"
 const SYMBOL_HILL = "︿"
 const SYMBOL_FOREST = "𓍊𓋼"
 const SYMBOL_OUTPOST = "✪"
+const SYMBOL_COLONY = "⛨"  # Colony symbol
 
 # Map size and tile settings
 var map_size = Vector2(40, 40)
@@ -17,7 +18,6 @@ var noise = FastNoiseLite.new()
 var astar = AStar2D.new()
 # Path line
 var path_line: Line2D
-
 
 # Map data
 var biome_data = []
@@ -43,16 +43,14 @@ var tile_theme: Theme
 var player
 
 func _ready():
-		# Create the Line2D node for the path
+	# Create the Line2D node for the path
 	path_line = Line2D.new()
 	path_line.width = 2
 	path_line.default_color = Color(1.0, 1.0, 1.0)  # white color
-	
-
-	path_line.set_material(material)
 
 	# Add the Line2D node to the scene
 	add_child(path_line)
+	
 	# Load the theme from the specified path
 	tile_theme = load("res://theme.tres")
 
@@ -68,6 +66,7 @@ func _ready():
 	generate_map_data()
 	place_oases()
 	place_outposts()
+	place_colony()  # Ensure the colony is placed after the outposts
 	generate_map()
 
 	# Set up AStar for pathfinding
@@ -78,13 +77,10 @@ func _ready():
 	add_child(player)
 	var center_x = int(map_size.x / 2)
 	var center_y = int(map_size.y / 2)
-	player.position = Vector2(center_x * tile_size.x, center_y * tile_size.y)
+	player.position = Vector2(center_x * tile_size.x + 10, center_y * tile_size.y + 10)
 
 # Function to generate the interactive map manually
 func generate_map() -> void:
-	var center_x = int(map_size.x / 2)
-	var center_y = int(map_size.y / 2)
-
 	for y in range(map_size.y):
 		for x in range(map_size.x):
 			var index = y * map_size.x + x
@@ -100,10 +96,6 @@ func generate_map() -> void:
 
 			# Set the position manually (convert grid coordinates to world coordinates)
 			tile.position = Vector2(x * tile_size.x, y * tile_size.y)
-
-			# Set the Colony tile in the center
-			if x == center_x and y == center_y:
-				tile.text = "⛨"  # Colony symbol
 
 			# Connect the tile's press event to move the player
 			tile.connect("pressed", Callable(self, "_on_tile_pressed").bind(x, y))
@@ -142,25 +134,43 @@ func is_valid_tile(x: int, y: int) -> bool:
 func _on_tile_pressed(x: int, y: int) -> void:
 	var start_tile_id = get_tile_id(int(player.position.x / tile_size.x), int(player.position.y / tile_size.y))
 	var target_tile_id = get_tile_id(x, y)
-	
+
 	if astar.has_point(start_tile_id) and astar.has_point(target_tile_id):
 		var path = astar.get_point_path(start_tile_id, target_tile_id)
 
-		# Create an array of tile types along the path
+		# Create an array of tile types along the path and stop if a hill is encountered
 		var tile_types = []
+		var truncated_path = []
+		var stop_at_hill = false
+
 		for tile_pos in path:
 			var tile_index = int(tile_pos.y) * map_size.x + int(tile_pos.x)
-			tile_types.append(biome_data[tile_index]["biome"])  # Append the biome (tile type) of each tile
-		
+			var tile_data = biome_data[tile_index]
+
+			# Check if the tile is a hill, and stop the path if it is
+			if tile_data.symbol == SYMBOL_HILL:
+				stop_at_hill = true
+				break
+
+			# If no hill, append the tile and its type
+			truncated_path.append(tile_pos)
+			tile_types.append(tile_data.biome)
+
 		# Clear the previous path (if any) before drawing the new one
 		path_line.clear_points()
 
-		# Add points to the Line2D for the path
-		for point in path:
+		# Add points to the Line2D for the truncated path
+		path_line.add_point(player.position)  # Start at player position
+		for point in truncated_path:
 			path_line.add_point(point * tile_size + tile_size / 2)  # Adjust for tile size
-		
-		# Move the player along the path
-		player.move_along_path(path, tile_size, tile_types)
+
+		if not stop_at_hill:
+			print("No hill in path, moving to target.")
+		else:
+			print("Hill encountered, stopping path at previous tile.")
+
+		# Move the player along the truncated path
+		player.move_along_path(truncated_path, tile_size, tile_types)
 
 		var tile_data = biome_data[y * map_size.x + x]
 		print("Tile pressed at: ", x, ", ", y)
@@ -176,6 +186,7 @@ func _process(delta):
 	if not player.is_moving:
 		# When the player has reached the destination, clear the path line
 		clear_path_line()
+
 # Function to generate the base terrain (dunes/steppes)
 func generate_map_data() -> void:
 	for y in range(map_size.y):
@@ -276,6 +287,14 @@ func place_outpost_near_oasis(oasis: Dictionary) -> void:
 		best_tile.symbol = SYMBOL_OUTPOST
 		best_tile.biome = "Outpost"
 		outpost_count += 1
+
+# Place the colony at the center of the map
+func place_colony() -> void:
+	var center_x = int(map_size.x / 2)
+	var center_y = int(map_size.y / 2)
+	var tile_data = biome_data[center_y * map_size.x + center_x]
+	tile_data.symbol = SYMBOL_COLONY
+	tile_data.biome = "Colony"
 
 # Check if an outpost can be placed at coordinates
 func can_place_outpost(x: int, y: int) -> bool:
