@@ -19,7 +19,7 @@ class Event:
 func _ready():
 	# Define an event with conditions and options
 	var event_1 = Event.new(
-		"A strange traveler offers you a deal.",
+		"A strange traveler offers you a deal. Take it dammit I can't stay here for long you n'wah! I despise you",
 		[{"type": "resource", "name": "Gold", "amount": 2}, {"type": "situation", "name": "outpost_built", "state": false}],
 		[
 			{"text": "Accept the deal", "consequences": [{"type": "resource", "name": "Gold", "amount": -50}, {"type": "resource", "name": "Knowledge", "amount": 10}]},

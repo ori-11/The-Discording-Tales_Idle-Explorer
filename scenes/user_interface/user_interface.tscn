@@ -1,10 +1,11 @@
-[gd_scene load_steps=7 format=3 uid="uid://rlxk0bwfcbah"]
+[gd_scene load_steps=8 format=3 uid="uid://rlxk0bwfcbah"]
 
 [ext_resource type="Script" path="res://scenes/user_interface/user_interface.gd" id="1_knqjo"]
 [ext_resource type="Script" path="res://scenes/user_interface/console.gd" id="2_hnqqk"]
 [ext_resource type="Script" path="res://scenes/user_interface/label_resource.gd" id="2_vjwei"]
 [ext_resource type="PackedScene" uid="uid://dk2jy2rq3vntt" path="res://scenes/prototypes/clicker/prototype_clicker.tscn" id="3_byq0d"]
 [ext_resource type="Script" path="res://scenes/user_interface/map.gd" id="5_r5lb0"]
+[ext_resource type="Texture2D" uid="uid://qp1c8n51dwwa" path="res://Symbol3.png" id="6_3gqy5"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_t1fhv"]
 bg_color = Color(0, 0, 0, 0)
@@ -263,6 +264,12 @@ size_flags_horizontal = 3
 layout_mode = 2
 size_flags_vertical = 3
 script = ExtResource("5_r5lb0")
+
+[node name="UpperFog" type="Sprite2D" parent="VBoxContainer/Bottom/RightPanel/Tabs/TabContainer/Colony/VBoxContainer2/Map"]
+modulate = Color(1, 1, 1, 0.0196078)
+position = Vector2(452, 452)
+scale = Vector2(0.33, 0.33)
+texture = ExtResource("6_3gqy5")
 
 [node name="MarginContainer" type="MarginContainer" parent="VBoxContainer/Bottom/RightPanel/Tabs/TabContainer/Colony/VBoxContainer2"]
 layout_mode = 2

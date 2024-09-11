@@ -42,18 +42,30 @@ var restricted_map_max = Vector2(map_size.x - 4, map_size.y - 4)
 var tile_theme: Theme
 var player
 
+var fog_data = []  # Store fog status for each tile (true if covered, false if revealed)
+var tooltip: Label
+
 func _ready():
-	# Create the Line2D node for the path
+	# Initialize everything else
 	path_line = Line2D.new()
 	path_line.width = 2
 	path_line.default_color = Color(1.0, 1.0, 1.0)  # white color
+	path_line.z_index = 0  # Ensure the path line is below fog
 
 	# Add the Line2D node to the scene
 	add_child(path_line)
-	
-	# Load the theme from the specified path
-	tile_theme = load("res://theme.tres")
 
+	# Create and configure the tooltip label
+	tooltip = Label.new()
+	tooltip.visible = false  # Hide the tooltip initially
+	tooltip.add_theme_color_override("font_color", Color(1, 1, 1))  # White text
+	tooltip.add_theme_color_override("bg_color", Color(0, 0, 0, 0.8))  # Dark background
+	tooltip.custom_minimum_size = Vector2(100, 20)
+	tooltip.z_index = 10  # Set a high z_index to ensure it's rendered on top of everything else
+	add_child(tooltip)
+
+	# Load the theme and noise
+	tile_theme = load("res://theme.tres")
 	noise.seed = randi()
 	noise.noise_type = FastNoiseLite.TYPE_SIMPLEX
 	noise.frequency = 0.02
@@ -62,24 +74,31 @@ func _ready():
 	noise.fractal_gain = 0.5
 	noise.fractal_lacunarity = 2.0
 
-	# Remove GridContainer and manually layout tiles
+	# Initialize fog after generating the map data and placing objects
 	generate_map_data()
 	place_oases()
 	place_outposts()
-	place_colony()  # Ensure the colony is placed after the outposts
+	place_colony()  # Ensure colony is placed after the outposts
 	generate_map()
 
-	# Set up AStar for pathfinding
 	setup_astar_grid()
 
-	# Instance the player and place it on the center tile (Colony)
+	# Initialize fog of war
+	initialize_fog()
+	generate_fog_overlay()  # Create visual fog
+
+	# Set up player
 	player = preload("res://player.tscn").instantiate()
 	add_child(player)
 	var center_x = int(map_size.x / 2)
 	var center_y = int(map_size.y / 2)
-	player.position = Vector2(center_x * tile_size.x + 10, center_y * tile_size.y + 10)
-
-# Function to generate the interactive map manually
+	player.position = Vector2(center_x * tile_size.x + 12, center_y * tile_size.y + 12)
+	
+	# Reveal fog around the player's initial position
+	update_fog_around_player(player.position)
+	
+	
+# Generate map function
 func generate_map() -> void:
 	for y in range(map_size.y):
 		for x in range(map_size.x):
@@ -97,29 +116,91 @@ func generate_map() -> void:
 			# Set the position manually (convert grid coordinates to world coordinates)
 			tile.position = Vector2(x * tile_size.x, y * tile_size.y)
 
+			# Connect the mouse_entered and mouse_exited signals for the tooltip
+			tile.connect("mouse_entered", Callable(self, "_on_tile_mouse_entered").bind(x, y, tile))
+			tile.connect("mouse_exited", Callable(self, "_on_tile_mouse_exited"))
+
 			# Connect the tile's press event to move the player
 			tile.connect("pressed", Callable(self, "_on_tile_pressed").bind(x, y))
 
 			# Add the tile to the scene tree (no GridContainer, manual layout)
 			add_child(tile)
+# Initialize fog data
+func initialize_fog() -> void:
+	fog_data.resize(map_size.x * map_size.y)
+	for i in range(fog_data.size()):
+		fog_data[i] = true  # Initially, all tiles are covered by fog
 
-# Setup the AStar2D grid for pathfinding
+# Update fog around the player's position (2 tiles in 4 directions and 1 in diagonals)
+func update_fog_around_player(player_pos: Vector2) -> void:
+	var px = int(player_pos.x / tile_size.x)
+	var py = int(player_pos.y / tile_size.y)
+
+	# Clear a 5x5 area around the player (2 tiles in all directions, 1 tile in diagonals)
+	for dx in range(-2, 3):
+		for dy in range(-2, 3):
+			# Only clear tiles within this range
+			if abs(dx) <= 1 or abs(dy) <= 1:
+				var nx = px + dx
+				var ny = py + dy
+				if is_valid_tile(nx, ny):
+					fog_data[ny * map_size.x + nx] = false  # Mark the tile as revealed
+					var fog_node_name = "TileFog_" + str(nx) + "_" + str(ny)
+
+					# Optionally, remove the fog visually by hiding the corresponding fog tile
+					var fog_node = get_node_or_null(fog_node_name)
+					if fog_node:
+						fog_node.hide()
+
+
+# Generate fog overlay for each tile
+func generate_fog_overlay() -> void:
+	for y in range(map_size.y):
+		for x in range(map_size.x):
+			var fog_rect = ColorRect.new()
+			fog_rect.color = Color(0.18, 0.18, 0.18, 1)  # Fully opaque black for fog
+			fog_rect.custom_minimum_size = tile_size  # Set the size of the fog tile to match the map tiles
+			fog_rect.position = Vector2(x * tile_size.x, y * tile_size.y)  # Set the position based on the tile grid
+			fog_rect.name = "TileFog_" + str(x) + "_" + str(y)  # Unique name for each fog tile
+			fog_rect.z_index = 1  # Ensure fog is above the path line
+			fog_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE  # Allow clicking through the fog
+			add_child(fog_rect)
+
+			
+			
+# Setup the AStar2D grid for pathfinding, avoiding hills
 func setup_astar_grid():
+	astar.clear()  # Clear any previous points
 	for y in range(map_size.y):
 		for x in range(map_size.x):
 			var id = get_tile_id(x, y)
 			var pos = Vector2(x, y)
-			astar.add_point(id, pos)
-	
+			var tile_index = y * map_size.x + x
+			var tile_data = biome_data[tile_index]
+
+			# If the tile is a hill, don't add it to the pathfinding grid
+			if tile_data.symbol != SYMBOL_HILL:
+				astar.add_point(id, pos)
+
 	# Connect neighboring tiles in 4 directions (up, down, left, right)
 	for y in range(map_size.y):
 		for x in range(map_size.x):
 			var id = get_tile_id(x, y)
-			for offset in [Vector2(1, 0), Vector2(-1, 0), Vector2(0, 1), Vector2(0, -1)]:
-				var neighbor_pos = Vector2(x, y) + offset
-				if is_valid_tile(neighbor_pos.x, neighbor_pos.y):
-					var neighbor_id = get_tile_id(neighbor_pos.x, neighbor_pos.y)
-					astar.connect_points(id, neighbor_id)
+			var tile_index = y * map_size.x + x
+			var tile_data = biome_data[tile_index]
+
+			# Skip hills when connecting points
+			if tile_data.symbol != SYMBOL_HILL:
+				for offset in [Vector2(1, 0), Vector2(-1, 0), Vector2(0, 1), Vector2(0, -1)]:
+					var neighbor_pos = Vector2(x, y) + offset
+					if is_valid_tile(neighbor_pos.x, neighbor_pos.y):
+						var neighbor_id = get_tile_id(neighbor_pos.x, neighbor_pos.y)
+						var neighbor_tile_index = int(neighbor_pos.y) * map_size.x + int(neighbor_pos.x)
+						var neighbor_tile_data = biome_data[neighbor_tile_index]
+
+						# Skip connecting hills
+						if neighbor_tile_data.symbol != SYMBOL_HILL:
+							astar.connect_points(id, neighbor_id)
 
 # Utility function to get a unique ID for each tile
 func get_tile_id(x: int, y: int) -> int:
@@ -138,36 +219,25 @@ func _on_tile_pressed(x: int, y: int) -> void:
 	if astar.has_point(start_tile_id) and astar.has_point(target_tile_id):
 		var path = astar.get_point_path(start_tile_id, target_tile_id)
 
-		# Create an array of tile types along the path and stop if a hill is encountered
+		# Create an array of tile types along the path
 		var tile_types = []
 		var truncated_path = []
-		var stop_at_hill = false
 
 		for tile_pos in path:
 			var tile_index = int(tile_pos.y) * map_size.x + int(tile_pos.x)
 			var tile_data = biome_data[tile_index]
 
-			# Check if the tile is a hill, and stop the path if it is
-			if tile_data.symbol == SYMBOL_HILL:
-				stop_at_hill = true
-				break
-
-			# If no hill, append the tile and its type
+			# Append the tile and its type
 			truncated_path.append(tile_pos)
 			tile_types.append(tile_data.biome)
 
 		# Clear the previous path (if any) before drawing the new one
-		path_line.clear_points()
+		path_line.clear_points()  # Use clear_points() instead of clear()
 
 		# Add points to the Line2D for the truncated path
 		path_line.add_point(player.position)  # Start at player position
 		for point in truncated_path:
 			path_line.add_point(point * tile_size + tile_size / 2)  # Adjust for tile size
-
-		if not stop_at_hill:
-			print("No hill in path, moving to target.")
-		else:
-			print("Hill encountered, stopping path at previous tile.")
 
 		# Move the player along the truncated path
 		player.move_along_path(truncated_path, tile_size, tile_types)
@@ -183,9 +253,27 @@ func clear_path_line():
 
 # Add a _process function to track the player's movement and clear the line when the destination is reached
 func _process(delta):
-	if not player.is_moving:
-		# When the player has reached the destination, clear the path line
-		clear_path_line()
+	# Ensure we can access the player's script
+	if player and player.is_moving:
+		var direction = (player.target_position - player.position).normalized()  # Direction towards the next tile
+		var distance_to_move = player.dynamic_speed * delta
+
+		# Check if the player is close enough to the target tile
+		if player.position.distance_to(player.target_position) <= distance_to_move:
+			# Snap to the target position
+			player.position = player.target_position
+			player.current_path_index += 1
+			player.is_moving = false
+
+
+			# If there are more tiles in the path, move to the next one
+			if player.current_path_index < player.current_path.size():
+				player.move_to_next_tile()
+
+			# Update fog based on the player's new position
+			update_fog_around_player(player.position)
+
+
 
 # Function to generate the base terrain (dunes/steppes)
 func generate_map_data() -> void:
@@ -286,15 +374,34 @@ func place_outpost_near_oasis(oasis: Dictionary) -> void:
 	if best_tile != null:
 		best_tile.symbol = SYMBOL_OUTPOST
 		best_tile.biome = "Outpost"
+		ensure_non_hill_adjacent(best_tile["x"], best_tile["y"])  # Ensure adjacent non-hill tile
 		outpost_count += 1
 
-# Place the colony at the center of the map
+
+# Place the colony at the center of the map and ensure at least one adjacent tile is not a hill
 func place_colony() -> void:
 	var center_x = int(map_size.x / 2)
 	var center_y = int(map_size.y / 2)
 	var tile_data = biome_data[center_y * map_size.x + center_x]
 	tile_data.symbol = SYMBOL_COLONY
 	tile_data.biome = "Colony"
+
+	# Ensure at least one adjacent tile is not a hill
+	ensure_non_hill_adjacent(center_x, center_y)
+
+# Ensure one of the adjacent tiles is not a hill
+func ensure_non_hill_adjacent(x: int, y: int) -> void:
+	var offsets = [Vector2(1, 0), Vector2(-1, 0), Vector2(0, 1), Vector2(0, -1)]
+	for offset in offsets:
+		var nx = x + offset.x
+		var ny = y + offset.y
+		if is_valid_tile(nx, ny):
+			var neighbor_tile_data = biome_data[ny * map_size.x + nx]
+			if neighbor_tile_data.symbol == SYMBOL_HILL:
+				# Replace the hill with a steppes or dunes tile
+				neighbor_tile_data.symbol = SYMBOL_STEPPE
+				neighbor_tile_data.biome = "Steppes"
+				return  # Exit after modifying one tile
 
 # Check if an outpost can be placed at coordinates
 func can_place_outpost(x: int, y: int) -> bool:
@@ -323,3 +430,26 @@ func get_tile_border_distance(x: int, y: int) -> int:
 # Utility: Check if a tile is within restricted area (excluding borders)
 func is_within_restricted_area(x: int, y: int) -> bool:
 	return x >= restricted_map_min.x and x <= restricted_map_max.x and y >= restricted_map_min.y and y <= restricted_map_max.y
+	
+	# Remove the first point from the Line2D path (to erase the path behind the player)
+func remove_point_from_path():
+	if path_line.get_point_count() > 0:
+		path_line.remove_point(0)  # This removes the first point from the path
+
+# Show tooltip on mouse enter if the tile is not covered by fog
+func _on_tile_mouse_entered(x: int, y: int, tile: Button):
+	var index = y * map_size.x + x
+	if not fog_data[index]:  # Check if the tile is not covered by fog
+		var tile_data = biome_data[index]
+		tooltip.text = "... " + tile_data.biome  # Show the biome type
+
+		# Position the tooltip relative to the tile's position
+		tooltip.position = tile.position + Vector2(0, tile_size.y + 5)  # Place it below the tile
+
+		tooltip.visible = true
+	else:
+		tooltip.visible = false  # Hide if the tile is still covered by fog
+
+# Hide tooltip on mouse exit
+func _on_tile_mouse_exited():
+	tooltip.visible = false
