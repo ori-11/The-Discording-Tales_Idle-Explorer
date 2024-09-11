@@ -20,6 +20,10 @@ config/icon="res://icon.svg"
 window/size/viewport_width=1920
 window/size/viewport_height=1080
 
+[editor_plugins]
+
+enabled=PackedStringArray("res://addons/customeditorplugin/plugin.cfg", "res://addons/event_tool/plugin.cfg")
+
 [rendering]
 
 environment/defaults/default_clear_color=Color(0.197937, 0.197937, 0.197937, 1)

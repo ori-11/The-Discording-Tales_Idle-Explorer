@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=3 uid="uid://bju4jxwr7a0pg"]
+[gd_scene load_steps=12 format=3 uid="uid://bju4jxwr7a0pg"]
 
 [ext_resource type="Script" path="res://scenes/game.gd" id="1_iwj3v"]
 [ext_resource type="Script" path="res://scripts/handlers/handler_resources.gd" id="3_uuwla"]
@@ -6,7 +6,9 @@
 [ext_resource type="PackedScene" uid="uid://dnvqc0nbfjk0b" path="res://scenes/groundsegment.tscn" id="9_re738"]
 [ext_resource type="PackedScene" uid="uid://bpkphu8qj137m" path="res://scenes/bg.tscn" id="10_nrarm"]
 [ext_resource type="PackedScene" uid="uid://b5pwnh1tmyrnl" path="res://scenes/ground.tscn" id="11_2juen"]
+[ext_resource type="Script" path="res://scripts/handlers/handler_events.gd" id="11_we5lh"]
 [ext_resource type="PackedScene" uid="uid://bhtein0chknfn" path="res://scenes/dino.tscn" id="12_1dh7a"]
+[ext_resource type="Script" path="res://scripts/EventPopup.gd" id="12_x5abk"]
 [ext_resource type="PackedScene" uid="uid://lyf4a3sklk1o" path="res://scenes/hud.tscn" id="13_qmaoo"]
 [ext_resource type="PackedScene" uid="uid://lotwuige1aee" path="res://scenes/game_over.tscn" id="14_ojg3r"]
 
@@ -17,6 +19,9 @@ script = ExtResource("1_iwj3v")
 
 [node name="Resources" type="Node" parent="Handlers"]
 script = ExtResource("3_uuwla")
+
+[node name="Events" type="Node" parent="Handlers"]
+script = ExtResource("11_we5lh")
 
 [node name="Bg" parent="." instance=ExtResource("10_nrarm")]
 visible = false
@@ -46,3 +51,32 @@ visible = false
 
 [node name="GroundSegment" parent="." instance=ExtResource("9_re738")]
 visible = false
+
+[node name="EventPopup" type="Window" parent="."]
+position = Vector2i(-1000, 0)
+size = Vector2i(500, 100)
+script = ExtResource("12_x5abk")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="EventPopup"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="Label" type="Label" parent="EventPopup/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+horizontal_alignment = 1
+
+[node name="ButtonContainer" type="VBoxContainer" parent="EventPopup/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Button" type="Button" parent="EventPopup/VBoxContainer/ButtonContainer"]
+layout_mode = 2
+
+[node name="Button2" type="Button" parent="EventPopup/VBoxContainer/ButtonContainer"]
+layout_mode = 2
