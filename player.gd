@@ -16,6 +16,9 @@ var chat_log: VBoxContainer  # Reference to the VBoxContainer (chat log)
 var message_sent_tiles = {}  # Dictionary to track tiles where messages have been sent
 var map
 
+var sprite  # Reference to the player's Sprite2D
+var target_rotation = 0.0  # The target rotation for the sprite
+
 # Speed reduction percentages by tile type
 var tile_speed_reduction = {
 	"Steppes": 0.0,       # 0% reduction
@@ -36,6 +39,9 @@ func _ready():
 
 	# Get the reference to the map
 	map = get_parent()
+
+	# Get reference to the Sprite2D child node
+	sprite = $Sprite2D  # Make sure the Sprite2D is a direct child of the player
 
 # Function to add a new message to the chat log
 func add_chat_message(message: String):
@@ -82,6 +88,9 @@ func move_to_next_tile():
 		target_position = (tile_pos * tile_size) + (tile_size / 2)
 		is_moving = true
 
+		# Rotate the sprite gradually by 45 degrees
+		target_rotation += deg_to_rad(45)  # Add 45 degrees to the target rotation
+
 var tolerance = 1.0  # You can adjust this value if needed
 
 func _process(delta):
@@ -108,3 +117,7 @@ func _process(delta):
 			# Decelerate the player as they move towards the tile
 			dynamic_speed = max(dynamic_speed * (1.0 - deceleration_rate * delta), minimum_speed)
 			position += direction * distance_to_move
+
+	# Dynamically scale the rotation interpolation speed based on player's movement speed
+	var rotation_speed_factor = clamp(dynamic_speed / move_speed, 0.2, 1.0)  # Scale factor based on current speed
+	sprite.rotation = lerp_angle(sprite.rotation, target_rotation, rotation_speed_factor * delta * 10)
