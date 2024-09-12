@@ -45,6 +45,8 @@ var player
 var fog_data = []  # Store fog status for each tile (true if covered, false if revealed)
 var tooltip: Label
 
+var outpost_positions = []  # To store the positions of all outposts
+
 func _ready():
 	# Initialize everything else
 	path_line = Line2D.new()
@@ -96,6 +98,62 @@ func _ready():
 	
 	# Reveal fog around the player's initial position
 	update_fog_around_player(player.position)
+		# Generate paths between outposts
+	generate_outpost_paths()
+	
+	
+func generate_outpost_paths():
+	# Collect all outpost positions
+	for y in range(map_size.y):
+		for x in range(map_size.x):
+			var index = y * map_size.x + x
+			var tile_data = biome_data[index]
+			if tile_data.symbol == SYMBOL_OUTPOST:
+				outpost_positions.append(Vector2(x, y))  # Store outpost positions
+
+	# For each outpost, generate 1 to 3 random connections to other outposts
+	var connected_outposts = {}  # Dictionary to avoid duplicate paths
+	for outpost in outpost_positions:
+		var num_connections = randi_range(0, 1)  # Choose 1 to 3 random connections
+		var available_outposts = outpost_positions.duplicate()  # Copy of outposts
+		available_outposts.erase(outpost)  # Remove the current outpost from the available list
+
+		for i in range(num_connections):
+			if available_outposts.size() > 0:
+				var target_outpost = available_outposts[randi_range(0, available_outposts.size() - 1)]
+				available_outposts.erase(target_outpost)  # Avoid connecting to the same outpost again
+
+				# Create a unique key for the path (using string representation of positions)
+				var outpost_key = str(outpost.x) + "_" + str(outpost.y)
+				var target_key = str(target_outpost.x) + "_" + str(target_outpost.y)
+				var path_key = outpost_key + "-" + target_key
+				var reverse_key = target_key + "-" + outpost_key
+
+				if not connected_outposts.has(path_key) and not connected_outposts.has(reverse_key):
+					connected_outposts[path_key] = true  # Mark the path as created
+
+					# Find the path using AStar2D between the two outposts
+					var start_id = get_tile_id(outpost.x, outpost.y)
+					var target_id = get_tile_id(target_outpost.x, target_outpost.y)
+
+					if astar.has_point(start_id) and astar.has_point(target_id):
+						var astar_path = astar.get_point_path(start_id, target_id)  # Get the path using AStar
+
+						if astar_path.size() > 1:
+							# Create and add a new Line2D node for the path
+							var outpost_path = Line2D.new()
+							outpost_path.width = 10
+							outpost_path.default_color = Color(0.125, 0.125, 0.125, 1)  # Gray color for outpost paths
+							outpost_path.z_index = -1  # Ensure the path is below other UI elements
+
+							# Add points to the Line2D path for each tile in the AStar path
+							for point in astar_path:
+								outpost_path.add_point(point * tile_size + tile_size / 2)  # Adjust for tile size
+
+							# Add the Line2D path to the scene
+							add_child(outpost_path)
+
+	
 	
 	
 # Generate map function
