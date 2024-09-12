@@ -1,3 +1,4 @@
+#map.gd script
 extends Control  # or Node2D
 
 # Symbols for various map elements

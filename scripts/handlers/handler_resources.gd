@@ -3,13 +3,13 @@ extends Node
 
 ## Singleton reference
 static var ref : HandlerResources
+var log_scene = preload("res://scenes/user_interface/log.tscn")  # Load the log.tscn scene
 
 ## Assigns itself if there is no ref, and otherwise, destroy it (singleton check)
 func _enter_tree() -> void:
 	if not ref:
 		ref = self
 		return
-		
 	queue_free()
 
 ## Dictionary to hold different resource types and their quantities
@@ -73,6 +73,9 @@ func update_resource(resource_type: String, new_quantity: int) -> void:
 	
 	resource_created.emit(resource_type, new_quantity)
 
+	# Send resource update to chat log
+	send_to_chatlog("Resource update: " + resource_type + " is now " + str(new_quantity))
+
 	# Trigger event checks after resource update
 	get_node("/root/Game/Handlers/Events").check_events()
 
@@ -81,9 +84,20 @@ func update_situation(situation_name: String, state: bool) -> void:
 	if situations.has(situation_name):
 		situations[situation_name] = state
 
+	# Send situation update to chat log
+	send_to_chatlog("Situation update: " + situation_name + " is now " + str(state))
+
 	# Trigger event checks after situation change
 	get_node("/root/Game/Handlers/Events").check_events()
 
-## Check if a resource type exists
-func resource_exists(resource_type: String) -> bool:
-	return resources.has(resource_type)
+# Function to send messages to the chat log using log.tscn
+func send_to_chatlog(message: String):
+	var chat_log = get_tree().get_nodes_in_group("chat_log")[0] if get_tree().has_group("chat_log") else null
+	if chat_log:
+		var new_message = log_scene.instantiate()  # Instance the log.tscn scene
+		if new_message:  # Check if instantiation was successful
+			new_message.text = message  # Directly set the message text because new_message is a Label
+			chat_log.add_child(new_message)  # Add it to the chat log
+			chat_log.move_child(new_message, 0)  # Move it to the top of the chat log
+		else:
+			print("Failed to instance log.tscn")

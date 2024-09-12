@@ -1,3 +1,4 @@
+#player.gd script
 extends CharacterBody2D
 
 var move_speed = 200  # Base max speed for Steppes
@@ -15,6 +16,7 @@ var tile_type_data: Array = []  # Array to store tile types along the path
 var chat_log: VBoxContainer  # Reference to the VBoxContainer (chat log)
 var message_sent_tiles = {}  # Dictionary to track tiles where messages have been sent
 var map
+var log_scene = preload("res://scenes/user_interface/log.tscn")  # Load the log.tscn scene
 
 var sprite  # Reference to the player's Sprite2D
 var target_rotation = 0.0  # The target rotation for the sprite
@@ -44,19 +46,16 @@ func _ready():
 	sprite = $Sprite2D  # Make sure the Sprite2D is a direct child of the player
 
 # Function to add a new message to the chat log
-func add_chat_message(message: String):
+func send_to_chatlog(message: String):
+	var chat_log = get_tree().get_nodes_in_group("chat_log")[0] if get_tree().has_group("chat_log") else null
 	if chat_log:
-		# Create a new Label node for the message
-		var new_message_label = Label.new()
-		new_message_label.text = message
-
-		# Add the message label to the VBoxContainer
-		chat_log.add_child(new_message_label)
-
-		# Move the newly added label to the top of the VBoxContainer
-		chat_log.move_child(new_message_label, 0)
-	else:
-		print("ChatLog container not set")
+		var new_message = log_scene.instantiate()  # Instance the log.tscn scene
+		if new_message:  # Check if instantiation was successful
+			new_message.text = message  # Directly set the message text because new_message is a Label
+			chat_log.add_child(new_message)  # Add it to the chat log
+			chat_log.move_child(new_message, 0)  # Move it to the top of the chat log
+		else:
+			print("Failed to instance log.tscn")
 
 # Move the player along the calculated path and pass the tile types for each tile
 func move_along_path(path: Array, tile_size_param: Vector2, tile_type_array: Array):
@@ -82,7 +81,7 @@ func move_to_next_tile():
 
 		# Only send a message if it hasn't been sent for this tile
 		if not message_sent_tiles.has(tile_id):
-			add_chat_message("Crossing " + tile_type)
+			send_to_chatlog("Crossing " + tile_type)
 			message_sent_tiles[tile_id] = true  # Mark this tile as having sent a message
 
 		target_position = (tile_pos * tile_size) + (tile_size / 2)

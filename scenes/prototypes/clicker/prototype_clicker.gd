@@ -17,6 +17,7 @@ extends Control
 @export var timer: Timer  # Timer for controlling click delay
 @export var progress_bar: ProgressBar  # Reference to the ProgressBar
 @export var tooltip: LineEdit  # Reference to the LineEdit node for the tooltip
+var log_scene = preload("res://scenes/user_interface/log.tscn")  # Load the log.tscn scene
 
 var elapsed_time = 0.0  # To track the time progression
 
@@ -52,20 +53,19 @@ func create_resource() -> void:
 
 	# Add the appropriate message to the chat log
 	var message = chat_log_message.replace("{amount}", str(amount)).replace("{resource}", resource_type)
-	add_to_chat_log(message)
+	send_to_chatlog(message)
 
 ## Function to add a message to the chat log (now using VBoxContainer)
-func add_to_chat_log(message: String) -> void:
-	if chat_log_container:
-		# Create a new Label node for the message
-		var new_message_label = Label.new()
-		new_message_label.text = message
-
-		# Add the new message at the top of the VBoxContainer
-		chat_log_container.add_child(new_message_label)
-		chat_log_container.move_child(new_message_label, 0)  # Move it to the top
-	else:
-		print("ChatLog container not set")
+func send_to_chatlog(message: String):
+	var chat_log = get_tree().get_nodes_in_group("chat_log")[0] if get_tree().has_group("chat_log") else null
+	if chat_log:
+		var new_message = log_scene.instantiate()  # Instance the log.tscn scene
+		if new_message:  # Check if instantiation was successful
+			new_message.text = message  # Directly set the message text because new_message is a Label
+			chat_log.add_child(new_message)  # Add it to the chat log
+			chat_log.move_child(new_message, 0)  # Move it to the top of the chat log
+		else:
+			print("Failed to instance log.tscn")
 
 ## Triggered when the button is pressed
 func _on_button_pressed() -> void:

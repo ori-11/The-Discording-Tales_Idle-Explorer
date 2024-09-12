@@ -1,3 +1,4 @@
+#handler_events.gd script
 extends Node
 
 # List of events
