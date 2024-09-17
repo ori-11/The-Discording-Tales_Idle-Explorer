@@ -1,6 +1,6 @@
 # Contributing to [Project Name]
 
-Thank you for considering contributing to **[Project Name]**! Your help is greatly appreciated. This guide will help you get started with contributing to the project.
+Thank you for considering contributing to **[Project Name]**! Your help is greatly appreciated. This guide will help you get started with contributing to the project
 
 ---
 
