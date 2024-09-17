@@ -10,16 +10,16 @@ config_version=5
 
 [application]
 
-config/name="Discording Travels"
-run/main_scene="res://scenes/game.tscn"
+config/name="The Discording Tales : Idle Explorer"
+run/main_scene="res://scenes/game/game.tscn"
 config/features=PackedStringArray("4.3", "Forward Plus")
-config/icon="res://icon.svg"
+config/icon="res://assets/Symbol_Ico.png"
 
 [display]
 
 window/size/viewport_width=1920
 window/size/viewport_height=1080
-window/size/mode=2
+window/size/mode=4
 
 [editor]
 

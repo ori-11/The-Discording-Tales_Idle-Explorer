@@ -61,23 +61,51 @@ func consume_resource(resource_type: String, quantity: int) -> Error:
 
 		return OK
 	else:
+		send_to_chatlog("Not enough " + resource_type + "...")
 		return FAILED  # Not enough of the resource to consume
 
-## NEW FUNCTION: Update (set) a resource directly to a specific value
-func update_resource(resource_type: String, new_quantity: int) -> void:
+## NEW FUNCTION: Update (adjust) a resource by a specific value
+func update_resource(resource_type: String, adjustment: int) -> void:
+	# Check if the resource exists, then adjust the value by the specified amount
 	if resources.has(resource_type):
-		resources[resource_type] = new_quantity
+		resources[resource_type] += adjustment  # Add or subtract the adjustment amount
 	else:
-		# If the resource type doesn't exist, initialize it
-		resources[resource_type] = new_quantity
-	
-	resource_created.emit(resource_type, new_quantity)
+		# If the resource doesn't exist, initialize it with the adjustment amount
+		resources[resource_type] = adjustment
+
+	resource_created.emit(resource_type, adjustment)
+
+	# Check if Knowledge has reached 10 for the first time
+	if resource_type == "Knowledge" and resources[resource_type] >= 10:
+		_show_request_and_children()
 
 	# Send resource update to chat log
-	send_to_chatlog("Resource update: " + resource_type + " is now " + str(new_quantity))
+	send_to_chatlog("Resource update: " + resource_type + " changed by " + str(adjustment) + ". New value: " + str(resources[resource_type]))
 
 	# Trigger event checks after resource update
 	get_node("/root/Game/Handlers/Events").check_events()
+
+# Function to show the Request node, its VBoxContainer, and only specific children
+func _show_request_and_children() -> void:
+	# Get the Request container from the "requests" group
+	var requests_group = get_tree().get_nodes_in_group("requests")
+	for request_container in requests_group:
+		# Set the Request container and VBoxContainer to visible
+		request_container.visible = true
+
+		# Get the VBoxContainer inside the Request container
+		var vbox = request_container.get_node("VBoxContainer")
+		vbox.visible = true  # Set VBoxContainer to visible
+
+		# Make specific children inside VBoxContainer visible
+		vbox.get_node("Label").visible = true
+		vbox.get_node("HSeparator").visible = true
+		vbox.get_node("GetColon").visible = true
+
+		# Ensure that GetColon2 remains hidden
+		vbox.get_node("Button2").visible = false
+
+	send_to_chatlog("Request container and specific elements are now visible.")
 
 ## NEW FUNCTION: Updates a situation
 func update_situation(situation_name: String, state: bool) -> void:
@@ -101,3 +129,10 @@ func send_to_chatlog(message: String):
 			chat_log.move_child(new_message, 0)  # Move it to the top of the chat log
 		else:
 			print("Failed to instance log.tscn")
+
+# Function to hide the Request container on game launch
+func _ready():
+	# Get the Request container from the "requests" group
+	var requests_group = get_tree().get_nodes_in_group("requests")
+	for request_container in requests_group:
+		request_container.visible = false  # Make sure the Request container is hidden when the game launches
