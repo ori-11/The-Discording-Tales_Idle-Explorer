@@ -119,31 +119,6 @@ git push origin feature/short-description
 
 ---
 
-## Code Style Guidelines
-
-To maintain code consistency, please follow these guidelines:
-
-- **Indentation:** Use 4 spaces for indentation.
-- **Variable Naming:** Use descriptive variable names in `lower_case_with_underscores`.
-- **Function and Class Names:**
-  - Functions: `lower_case_with_underscores()`
-  - Classes: `CamelCase`
-- **Comments:**
-  - Write comments to explain complex logic.
-  - Use docstrings for functions and classes.
-- **Line Length:** Limit lines to 80 characters.
-- **File Encoding:** Use UTF-8 encoding.
-
-**Example:**
-
-```python
-def calculate_sum(a, b):
-    """Calculate and return the sum of two numbers."""
-    return a + b
-```
-
----
-
 ## Communication
 
 - **Issues:**
