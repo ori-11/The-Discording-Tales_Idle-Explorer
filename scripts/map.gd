@@ -68,7 +68,7 @@ func _ready():
 	add_child(tooltip)
 
 	# Load the theme and noise
-	tile_theme = load("res://theme.tres")
+	tile_theme = load("res://resources/theme.tres")
 	noise.seed = randi()
 	noise.noise_type = FastNoiseLite.TYPE_SIMPLEX
 	noise.frequency = 0.02

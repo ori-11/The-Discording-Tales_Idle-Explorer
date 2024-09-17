@@ -45,11 +45,6 @@ func _ready():
 	
 	# Get the buttons from the UserInterface node
 	var user_interface = get_node("/root/Game/HUD/UserInterface")
-	user_interface.get_node("VBoxContainer/Bottom/RightPanel/Actions/Forward/Rest/Button").connect("pressed", Callable(self, "_on_rest_button_pressed"))
-	user_interface.get_node("VBoxContainer/Bottom/RightPanel/Actions/Forward/Graze/Button").connect("pressed", Callable(self, "_on_graze_button_pressed"))
-	user_interface.get_node("VBoxContainer/Bottom/RightPanel/Actions/Forward/Haste/Button").connect("pressed", Callable(self, "_on_haste_button_pressed"))
-	user_interface.get_node("VBoxContainer/Bottom/RightPanel/Actions/LookBack/Button").connect("pressed", Callable(self, "_on_lookback_button_pressed"))
-	
 	# Access the Console node from the UserInterface scene
 	console_node = user_interface.get_node("VBoxContainer/Bottom/LeftPanel/Console")
 	console_node.visible = false  # Start with the console hidden

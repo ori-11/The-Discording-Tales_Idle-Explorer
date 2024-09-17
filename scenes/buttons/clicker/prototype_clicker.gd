@@ -24,7 +24,7 @@ var elapsed_time = 0.0  # To track the time progression
 ## Initialize the button, signals, and UI at launch
 func _ready() -> void:
 	visible = true
-	button.pressed.connect(Callable(self, "_on_button_pressed"))
+
 	
 	# Connect the mouse enter and exit signals to the button
 	button.connect("mouse_entered", Callable(self, "_on_button_mouse_entered"))

@@ -116,9 +116,10 @@ layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 theme_override_styles/panel = SubResource("StyleBoxFlat_t1fhv")
-current_tab = 0
+current_tab = 1
 
 [node name="Colony" type="HBoxContainer" parent="VBoxContainer/Bottom/RightPanel/Tabs/TabContainer"]
+visible = false
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
@@ -265,7 +266,6 @@ layout_mode = 2
 size_flags_horizontal = 3
 
 [node name="Exploration" type="Control" parent="VBoxContainer/Bottom/RightPanel/Tabs/TabContainer"]
-visible = false
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
