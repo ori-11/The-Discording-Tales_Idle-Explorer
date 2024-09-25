@@ -36,9 +36,9 @@ visible = false
 position = Vector2(576, 324)
 
 [node name="EventPopup" type="Window" parent="."]
-mode = 1
 title = "Event !"
 size = Vector2i(500, 100)
+mode = 1
 wrap_controls = true
 exclusive = true
 unresizable = true

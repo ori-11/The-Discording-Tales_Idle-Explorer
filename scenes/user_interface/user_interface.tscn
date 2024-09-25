@@ -116,10 +116,8 @@ layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 theme_override_styles/panel = SubResource("StyleBoxFlat_t1fhv")
-current_tab = 1
 
 [node name="Colony" type="HBoxContainer" parent="VBoxContainer/Bottom/RightPanel/Tabs/TabContainer"]
-visible = false
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
@@ -142,11 +140,10 @@ theme_override_constants/margin_bottom = 16
 [node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/Bottom/RightPanel/Tabs/TabContainer/Colony/VBoxContainer/MarginContainer"]
 layout_mode = 2
 
-[node name="GetKnowledge" parent="VBoxContainer/Bottom/RightPanel/Tabs/TabContainer/Colony/VBoxContainer/MarginContainer/VBoxContainer" node_paths=PackedStringArray("chat_log_container") instance=ExtResource("3_byq0d")]
+[node name="GetKnowledge" parent="VBoxContainer/Bottom/RightPanel/Tabs/TabContainer/Colony/VBoxContainer/MarginContainer/VBoxContainer" instance=ExtResource("3_byq0d")]
 layout_mode = 2
 size_flags_horizontal = 1
 tooltip_description = "+1-3 Knowledge"
-chat_log_container = NodePath("../../../../../../../../LeftPanel/ScrollContainer/VBoxContainer")
 
 [node name="Request" type="MarginContainer" parent="VBoxContainer/Bottom/RightPanel/Tabs/TabContainer/Colony/VBoxContainer" groups=["requests"]]
 layout_mode = 2
@@ -168,25 +165,23 @@ horizontal_alignment = 1
 layout_mode = 2
 size_flags_vertical = 8
 
-[node name="GetColon" parent="VBoxContainer/Bottom/RightPanel/Tabs/TabContainer/Colony/VBoxContainer/Request/VBoxContainer" node_paths=PackedStringArray("chat_log_container") instance=ExtResource("3_byq0d")]
+[node name="GetColon" parent="VBoxContainer/Bottom/RightPanel/Tabs/TabContainer/Colony/VBoxContainer/Request/VBoxContainer" instance=ExtResource("3_byq0d")]
 custom_minimum_size = Vector2(0, 40)
 layout_mode = 2
 size_flags_horizontal = 1
 resource_type = "Gold"
 tooltip_description = "+1 Colon"
 timer_length = 1.0
-chat_log_container = NodePath("../../../../../../../../LeftPanel/ScrollContainer/VBoxContainer")
 
 [node name="Button" parent="VBoxContainer/Bottom/RightPanel/Tabs/TabContainer/Colony/VBoxContainer/Request/VBoxContainer/GetColon" index="1"]
 text = "Colon"
 
-[node name="Button2" parent="VBoxContainer/Bottom/RightPanel/Tabs/TabContainer/Colony/VBoxContainer/Request/VBoxContainer" node_paths=PackedStringArray("chat_log_container") instance=ExtResource("3_byq0d")]
+[node name="Button2" parent="VBoxContainer/Bottom/RightPanel/Tabs/TabContainer/Colony/VBoxContainer/Request/VBoxContainer" instance=ExtResource("3_byq0d")]
 custom_minimum_size = Vector2(0, 40)
 layout_mode = 2
 size_flags_horizontal = 1
 resource_type = "Gold"
 timer_length = 1.0
-chat_log_container = NodePath("../../../../../../../../LeftPanel/ScrollContainer/VBoxContainer")
 
 [node name="Button" parent="VBoxContainer/Bottom/RightPanel/Tabs/TabContainer/Colony/VBoxContainer/Request/VBoxContainer/Button2" index="1"]
 text = "Button2"
@@ -213,12 +208,11 @@ horizontal_alignment = 1
 layout_mode = 2
 size_flags_vertical = 8
 
-[node name="PrototypeClicker" parent="VBoxContainer/Bottom/RightPanel/Tabs/TabContainer/Colony/VBoxContainer/Build/VBoxContainer" node_paths=PackedStringArray("chat_log_container") instance=ExtResource("3_byq0d")]
+[node name="PrototypeClicker" parent="VBoxContainer/Bottom/RightPanel/Tabs/TabContainer/Colony/VBoxContainer/Build/VBoxContainer" instance=ExtResource("3_byq0d")]
 layout_mode = 2
 size_flags_horizontal = 1
 resource_type = "Gold"
 timer_length = 1.0
-chat_log_container = NodePath("../../../../../../../../LeftPanel/ScrollContainer/VBoxContainer")
 
 [node name="Button" parent="VBoxContainer/Bottom/RightPanel/Tabs/TabContainer/Colony/VBoxContainer/Build/VBoxContainer/PrototypeClicker" index="1"]
 text = "Colon"
@@ -266,6 +260,7 @@ layout_mode = 2
 size_flags_horizontal = 3
 
 [node name="Exploration" type="Control" parent="VBoxContainer/Bottom/RightPanel/Tabs/TabContainer"]
+visible = false
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
