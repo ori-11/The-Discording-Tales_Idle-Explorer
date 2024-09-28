@@ -3,7 +3,7 @@
 [ext_resource type="Script" path="res://scenes/buttons/generator/prototype_generator.gd" id="1_bqi5a"]
 [ext_resource type="Script" path="res://scripts/label_resource.gd" id="2_s2710"]
 
-[node name="PrototypeGenerator" type="Control" node_paths=PackedStringArray("button", "timer")]
+[node name="PrototypeGenerator" type="Control"]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -13,8 +13,6 @@ grow_vertical = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 script = ExtResource("1_bqi5a")
-button = NodePath("Button")
-timer = NodePath("Timer")
 
 [node name="Button" type="Button" parent="."]
 layout_mode = 1
